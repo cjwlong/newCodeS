@@ -1,0 +1,123 @@
+﻿<Window x:Class="CCD.Views.PolynomialWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CCD.Views"
+        xmlns:prism="http://prismlibrary.com/"
+        xmlns:vm="clr-namespace:CCD.ViewModels"
+        xmlns:convert="clr-namespace:CCD.convertors"
+        prism:ViewModelLocator.AutoWireViewModel="True"    
+         xmlns:local2="clr-namespace:CCD.Controls"
+        mc:Ignorable="d"
+        Title="相机标定" Height="450" Width="800">
+    <Window.DataContext>
+        <vm:PolynomialWindowViewModel x:Name="ViewModel"/>
+    </Window.DataContext>
+    <Window.Resources>
+        <convert:PointConverter x:Key="PointConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid x:Name="FirstGrid"  >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="       请使用机床打出3x3矩阵或者圈出标定板的点，然后通过手动标记定位点的方式将矩阵的点标记在相机画面上，标记顺序和方法如下图所示，标记完成后点击下一步。"
+               TextWrapping="Wrap"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Margin="10"
+               FontSize="20"/>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <local2:TianZiGridControl x:Name="Tianci" Width="250" Height="250" Margin="42 0 210 0" />
+                <Button x:Name="NextBtn" Content="下一步" Width="80" Height="40" Margin="5" Click="NextBtn_Click"  />
+
+            </StackPanel>
+
+        </Grid >
+
+        <Grid x:Name="SecondGrid" Visibility="Collapsed" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="请输入行列数以及真实间隔，选择轴真实坐标系的正方向"
+                TextWrapping="Wrap"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="10"
+                FontSize="20"/>
+            <StackPanel Height="50" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" >
+                    <Label VerticalAlignment="Center" FontSize="16" Content="行数：" />
+                    <TextBox x:Name="rowsTextBox" Text="{Binding RowNum}" Width="30" HorizontalAlignment="Left" IsEnabled="False" VerticalAlignment="Center"  IsReadOnly="true"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" >
+                    <Label VerticalAlignment="Center" FontSize="16" Content="列数：" />
+                    <TextBox x:Name="columnsTextBox" Text="{Binding ColNum}" IsEnabled="False" Width="30" HorizontalAlignment="Left" VerticalAlignment="Center" IsReadOnly="true" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" >
+                    <Label VerticalAlignment="Center" FontSize="16" Content="点之间的理论间隔："  Margin="12"/>
+                    <TextBox x:Name="spacingTextBox" Text="{Binding SpacingText}" Width="30" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    <Label VerticalAlignment="Center" FontSize="16" Content="(mm)"  Margin="12"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" >
+                    <Label VerticalAlignment="Center" FontSize="16" Content="真实轴坐标正方向：" />
+                    <ComboBox x:Name="ComboMode" Width="100" Margin="5" SelectedIndex="{Binding SelectIndex}" Cursor=""  IsReadOnly="True" IsEnabled="False">
+                    <!--<ComboBoxItem>y↑→x</ComboBoxItem>
+                    <ComboBoxItem>y←↑x</ComboBoxItem>
+                    <ComboBoxItem>x←↓y</ComboBoxItem>
+                    <ComboBoxItem>x↓→y</ComboBoxItem>-->
+                    <!--<ComboBoxItem>z↑→y</ComboBoxItem>-->
+                    <ComboBoxItem IsSelected="True" Cursor="">y←↑z</ComboBoxItem>
+                    <!--<ComboBoxItem>y←↓z</ComboBoxItem>
+                    <ComboBoxItem>z↓→y</ComboBoxItem>-->
+                </ComboBox>
+                </StackPanel>
+                <Button x:Name="validateButton" Margin="10 0 0 0" Content="生成坐标" Width="100" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Click="ValidateButton_Click" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Horizontal">
+                    <ItemsControl x:Name="PointContorl" ItemsSource="{Binding Points}" AlternationCount="{Binding Points.Count}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Margin="3" FontSize="14" Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(ItemsControl.AlternationIndex)}" />
+                                    <TextBlock Margin="3" FontSize="14" Text="像素坐标:" />
+                                    <TextBlock Margin="3" FontSize="14" Text="{Binding Converter={StaticResource PointConverter}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ItemsControl x:Name="RealPointContorl" ItemsSource="{Binding RealPoints}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Margin="3" FontSize="14"  Text="真实坐标:" />
+                                    <TextBlock Margin="3" FontSize="14" Text="{Binding Converter={StaticResource PointConverter}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+
+            <TextBlock x:Name="ResultText" Grid.Row="3" Text="{Binding ResultText}" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" FontSize="20"/>
+
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Button x:Name="ReturnBtn" Content="返回" Width="80" Height="40" Margin="3,3,220,3" Click="ReturnBtn_Click" />
+                <Button x:Name="CliiBtn" Content="标定" IsEnabled="{Binding IsClii}" Width="80" Height="40" Margin="3" Click="ConfirmButton_Click" />
+                <Button Content="取消"  Width="80" Height="40" Margin="3" Click="CancelButton_Click" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,103 @@
+﻿<UserControl x:Class="DiastimeterManager.Views.ContactRangeSetting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DiastimeterManager.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:base_convertor="clr-namespace:SharedResource.convertors;assembly=SharedResource"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             FontSize="15"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <base_convertor:DeviceStatusToContentConverter x:Key="DeviceStatusToContentConverter"/>
+        <base_convertor:DeviceStatusToEnableConvertor x:Key="DeviceStatusToEnableConvertor"/>
+        <base_convertor:DeviceStatusToVisibilityConvertor x:Key="DeviceStatusToVisibilityConvertor"/>
+        <base_convertor:DeviceStatusToBooleanConverter x:Key="DeviceStatusToBooleanConverter"/>
+        <base_convertor:IsCheckedToStringConverter x:Key="IsCheckedToStringConverter"/>
+        <base_convertor:BooleanToOppositeConvertor x:Key="BooleanToOppositeConvertor"/>
+    </UserControl.Resources>
+    <Grid>
+        <Border Background="#80e6e6e6" CornerRadius="5" Height="250" VerticalAlignment="Top">
+            <StackPanel>
+                <Label FontWeight="Heavy" FontSize="21" Margin="0 10">接触式测距仪</Label>
+
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="20 0">
+                        <StackPanel Orientation="Horizontal">
+                            <Label HorizontalAlignment="Center" VerticalAlignment="Center">串口:</Label>
+                            <ComboBox MinWidth="100" Height="35" Padding="1" 
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                  ItemsSource="{Binding AvailablePorts}"
+                                  SelectedItem="{Binding SelectedPort}"></ComboBox>
+                            <Button Command="{Binding RefreshPortConnectCommand}" 
+                                Background="Transparent"
+                                BorderThickness="1"
+                                BorderBrush="#272727">刷新</Button>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="20 0">
+                            <Label HorizontalAlignment="Center" VerticalAlignment="Center">波特率:</Label>
+                            <ComboBox MinWidth="100" Height="35" Padding="1"  
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                  ItemsSource="{Binding BaudRates}" 
+                                  SelectedItem="{Binding SelectedBaudRate}"></ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="20 0">
+                            <Button Width="100" Height="30"
+                                Command="{Binding ConnectCommand}"
+                                Content="{Binding LGQuick.DeviceStatus, Converter={StaticResource DeviceStatusToContentConverter}}"
+                                IsEnabled="{Binding LGQuick.DeviceStatus, Converter={StaticResource DeviceStatusToEnableConvertor}}"></Button>
+                            <ProgressBar IsIndeterminate="True"
+                                     Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                     Value="70" Margin="5 0"
+                                     Visibility="{Binding LGQuick.DeviceStatus, Converter={StaticResource DeviceStatusToVisibilityConvertor}}"></ProgressBar>
+                        </StackPanel>                        
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="20 10" >
+                        <Label VerticalAlignment="Center">通道选择：</Label>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton IsChecked="{Binding LGQuick.ChannelMode}">通道一</RadioButton>
+                            <Grid Width="30"></Grid>
+                            <RadioButton IsChecked="{Binding LGQuick.ChannelMode, Converter={StaticResource BooleanToOppositeConvertor}, Mode=OneWay}">通道二</RadioButton>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="20 10" IsEnabled="{Binding LGQuick.DeviceStatus, Converter={StaticResource DeviceStatusToBooleanConverter}}">
+                        <StackPanel Orientation="Horizontal">
+                            <Label>置零：</Label>
+                            <Button Margin="5 0" Width="70" Height="30"
+                                    Command="{Binding ZeroSettingCommand}">置零</Button>
+                            <!--<Button Margin="5 0" Width="70" Height="30"
+                                    Command="{Binding ZeroSettingCommand}" CommandParameter="1">偏置</Button>
+                            <Button Width="100" Height="30"
+                                    Command="{Binding ZeroSettingCommand}"  CommandParameter="0">恢复偏置</Button>-->
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="20 10" IsEnabled="{Binding LGQuick.DeviceStatus, Converter={StaticResource DeviceStatusToBooleanConverter}}">
+                        <Label HorizontalAlignment="Center" VerticalAlignment="Center">限位模式：</Label>
+                        <TextBox materialDesign:HintAssist.Hint="限位值"
+                                 IsEnabled="{Binding StartListen, Converter={StaticResource BooleanToOppositeConvertor}}"
+                                 Text="{Binding LimitValue}"
+                                 Padding="3 1"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                   Width="100" Height="30"
+                                   Margin="0 0 10 0"></TextBox>
+                        <ToggleButton x:Name="limitToggBtn" Command="{Binding ChangeListenStatusCommand}" 
+                                      IsChecked="{Binding StartListen}"
+                                      CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Mode=Self}}"
+                                      VerticalAlignment="Center"></ToggleButton>
+                        <TextBlock Margin="7 0" 
+                                   Text="{Binding ElementName=limitToggBtn, Path=IsChecked, Converter={StaticResource IsCheckedToStringConverter}}" 
+                                   VerticalAlignment="Center"></TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

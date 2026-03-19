@@ -1,0 +1,305 @@
+﻿<!--<UserControl x:Class="Machine.Views.MachinePositionDebug"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Machine.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            --><!-- 输入区 --><!--
+            <RowDefinition Height="200"/>
+            --><!-- 主表 --><!--
+            <RowDefinition Height="Auto"/>
+            --><!-- 主表按钮 --><!--
+            <RowDefinition Height="*"/>
+            --><!-- 子表 --><!--
+            <RowDefinition Height="Auto"/>
+            --><!-- 子表按钮 --><!--
+        </Grid.RowDefinitions>
+
+        --><!-- 输入区 --><!--
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,12" VerticalAlignment="Center" >
+            <TextBlock Text="起点" VerticalAlignment="Center" Margin="8,0"/>
+            <TextBox Width="130" Text="{Binding InputStart}" />
+
+            <TextBlock Text="终点" VerticalAlignment="Center" Margin="16,0"/>
+            <TextBox Width="130" Text="{Binding InputEnd}" />
+
+            <TextBlock Text="间隔" VerticalAlignment="Center" Margin="16,0"/>
+            <TextBox Width="100" Text="{Binding InputInterval}" />
+
+            <TextBlock Text="轴名称" VerticalAlignment="Center" Margin="16,0"/>
+            <ComboBox Width="120" ItemsSource="{Binding AxisList}" SelectedItem="{Binding SelectedAxis}" />
+
+            <Button Content="新增" Width="90" Margin="24,0" Command="{Binding AddMasterCommand}" />
+        </StackPanel>
+
+        --><!-- 主表 --><!--
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Masters}" SelectedItem="{Binding SelectedMaster}" AutoGenerateColumns="False" CanUserAddRows="False" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="主编号" Binding="{Binding Id}" Width="80"/>
+                <DataGridTextColumn Header="起点" Binding="{Binding Start}" Width="110"/>
+                <DataGridTextColumn Header="终点" Binding="{Binding End}" Width="110"/>
+                <DataGridTextColumn Header="间隔" Binding="{Binding Interval}" Width="110"/>
+                <DataGridTextColumn Header="轴名" Binding="{Binding AxisName}" Width="110"/>
+                <DataGridCheckBoxColumn Header="是否焦点区间" Binding="{Binding IsFocusRange}" Width="120"/>
+                --><!--<DataGridTemplateColumn Header="操作" Width="180">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="移动查看" Width="80" Margin="3"
+                                        Command="{Binding DataContext.MasterMoveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}" />
+                                <Button Content="删除" Width="80" Margin="3"
+                                        Command="{Binding DataContext.MasterDeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>--><!--
+            </DataGrid.Columns>
+        </DataGrid>
+
+        --><!-- 主表操作按钮 --><!--
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8">
+            <Button Content="删除选中" Width="100" Margin="6,0" Command="{Binding DeleteSelectedMasterCommand}" />
+            <Button Content="保存主表" Width="100" Margin="6,0" Command="{Binding SaveMainCommand}" />
+            <Button Content="运行" Width="100" Margin="6,0" Command="{Binding RunCommand}" />
+        </StackPanel>
+
+        --><!-- 子表（显示 FilteredDetails） --><!--
+        <DataGrid Grid.Row="3" ItemsSource="{Binding FilteredDetails}" SelectedItem="{Binding SelectedDetail}" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="编号" Binding="{Binding Id}" Width="80"/>
+                <DataGridTextColumn Header="主编号" Binding="{Binding MasterId}" Width="80"/>
+                <DataGridTextColumn Header="轴位置" Binding="{Binding AxisPosition}" Width="140"/>
+                <DataGridTextColumn Header="轴号" Binding="{Binding AxisName}" Width="100"/>
+                <DataGridTextColumn Header="间隔" Binding="{Binding Interval}" Width="100"/>
+                <DataGridTemplateColumn Header="操作" Width="180">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="移动查看" Width="80" Margin="3"
+                                      Command="{Binding DataContext.DetailMoveCommand,
+                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" />
+                                --><!--<Button Content="删除" Width="80" Margin="3"
+                                        Command="{Binding DataContext.DetailDeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}" />--><!--
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridCheckBoxColumn Header="是否焦点" Binding="{Binding IsFocus}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        --><!-- 子表操作按钮 --><!--
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8">
+            <Button Content="删除选中" Width="100" Margin="6,0" Command="{Binding DeleteSelectedDetailCommand}" />
+            <Button Content="保存子表" Width="100" Margin="6,0" Command="{Binding SaveSubCommand}" />
+        </StackPanel>
+    </Grid>
+</UserControl>-->
+<UserControl x:Class="Machine.Views.MachinePositionDebug"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Machine.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1400">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        
+        </Grid.RowDefinitions>
+
+        <!-- ========================= -->
+        <!-- 第一排输入（焦点）         -->
+        <!-- ========================= -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="焦点起点"  VerticalAlignment="Center"/>
+            <TextBox Width="100"  Text="{Binding FocusStart, UpdateSourceTrigger=PropertyChanged}"  />
+
+            <TextBlock Text="焦点终点" Margin="16,0" VerticalAlignment="Center"/>
+            <TextBox Width="100" Text="{Binding FocusEnd , UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock Text="间隔" Margin="16,0" VerticalAlignment="Center"/>
+            <TextBox Width="50" Text="{Binding FocusInterval , UpdateSourceTrigger=PropertyChanged}"  LostFocus="Mark_LostFocus" Cursor=""/>
+            <TextBlock Text="次数" Margin="16,0" VerticalAlignment="Center"/>
+            <TextBox Width="50" Text="{Binding FocusCount , UpdateSourceTrigger=PropertyChanged}"  LostFocus="Mark_LostFocus" Cursor=""/>
+
+            <TextBlock Text="焦点轴名" Margin="16,0" VerticalAlignment="Center"/>
+            <ComboBox Width="65" ItemsSource="{Binding AxisList}" SelectedItem="{Binding FocusAxis}"/>
+            <TextBlock Text="划线轴" Margin="16,0" VerticalAlignment="Center"/>
+            <ComboBox Width="65" ItemsSource="{Binding AxisList}" SelectedItem="{Binding LineAxis}"/>
+            <TextBlock Text="开始步距" Margin="16,0" VerticalAlignment="Center"/>
+            <TextBox Width="50" Text="{Binding FocusLen , UpdateSourceTrigger=PropertyChanged}"/>
+
+        </StackPanel>
+
+        <!-- ========================= -->
+        <!-- 第二排输入（打标）         -->
+        <!-- ========================= -->
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,12" Cursor="">
+            <TextBlock Text="打标间隔轴名" VerticalAlignment="Center"/>
+            <ComboBox Width="90" Margin="2,0" ItemsSource="{Binding AxisList}" SelectedItem="{Binding MarkAxis}"/>
+
+            <TextBlock Text="打标起点" Margin="14,0" VerticalAlignment="Center"/>
+            <TextBox Width="100" Text="{Binding MarkStart, UpdateSourceTrigger=PropertyChanged}"  LostFocus="MarkInterval_LostFocus"/>
+
+            <TextBlock Text="打标间隔" Margin="17,0" VerticalAlignment="Center"/>
+            <TextBox Width="100" Text="{Binding MarkInterval , UpdateSourceTrigger=PropertyChanged}"  LostFocus="MarkInterval_LostFocus" Cursor=""/>
+            <TextBlock Text="打标终点" Margin="16,0" VerticalAlignment="Center"/>
+            <Label Content="{Binding MarkEnd}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+
+            <TextBlock Text="划线起点" Margin="16,0" VerticalAlignment="Center"/>
+            <TextBox Width="60" Text="{Binding MarkZ}" HorizontalContentAlignment="Center"/>
+            <!--<TextBox Width="100" Text="{Binding MarkEnd}"  IsReadOnly="True" BorderThickness="0" />-->
+
+
+
+
+
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,0,0,12">
+            
+            <TextBlock Text="激光头和相机Y间距" Margin="1,0" VerticalAlignment="Center"/>
+            <TextBox Width="100" Text="{Binding LaserYDis}" HorizontalContentAlignment="Center"/>
+
+            <TextBlock Text="激光头和相机X间距" Margin="1,0" VerticalAlignment="Center"/>
+            <TextBox Width="100" Text="{Binding LaserXDis}" HorizontalContentAlignment="Center"/>
+
+            <TextBlock Text="激光头和相机Z间距" Margin="1,0" VerticalAlignment="Center"/>
+            <TextBox Width="100" Text="{Binding LaserZDis}" HorizontalContentAlignment="Center"/>
+            
+            <Button Content="恢复初始值" Width="110" Margin="20,0"
+                Command="{Binding RestoreCommand}" Cursor="Hand"/>
+
+            <Button Content="新增" Width="60" Margin="20,0"
+Command="{Binding AddMasterCommand}" Cursor="Hand"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="0,0,0,12"   Visibility="Hidden">
+
+            <TextBlock Text="Y" Margin="1,0" VerticalAlignment="Center"/>
+            <TextBox Width="60" Text="{Binding YAxisPosition}" HorizontalContentAlignment="Center"/>
+
+            <TextBlock Text="X" Margin="1,0" VerticalAlignment="Center"/>
+            <TextBox Width="60" Text="{Binding XAxisPosition}" HorizontalContentAlignment="Center"/>
+
+            <TextBlock Text="Z" Margin="1,0" VerticalAlignment="Center"/>
+            <TextBox Width="60" Text="{Binding ZAxisPosition}" HorizontalContentAlignment="Center"/>
+            <Button Content="获取当前位置" Width="120" Margin="20,0"
+Command="{Binding GetPosCommand}" Cursor="Hand"/>
+            <TextBlock Text="接触式到激光X" Margin="1,0" VerticalAlignment="Center"/>
+            <TextBox Width="60" Text="{Binding XRlativeDis}" HorizontalContentAlignment="Center"/>
+            <TextBlock Text="接触式到激光Y" Margin="1,0" VerticalAlignment="Center"/>
+            <TextBox Width="60" Text="{Binding YRlativeDis}" HorizontalContentAlignment="Center"/>
+            <TextBlock Text="接触式到激光Z" Margin="1,0" VerticalAlignment="Center"/>
+            <TextBox Width="60" Text="{Binding ZRlativeDis}" HorizontalContentAlignment="Center"/>
+            
+
+            <!--<Button Content="新增" Width="60" Margin="20,0"
+    Command="{Binding AddMasterCommand}" Cursor="Hand"/>-->
+        </StackPanel>
+        
+        <!-- ========================= -->
+        <!-- 主表（焦点列表）           -->
+        <!-- ========================= -->
+        <DataGrid Grid.Row="4" ItemsSource="{Binding Masters}"
+                  SelectedItem="{Binding SelectedMaster}"
+                  AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,10">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="主编号" Binding="{Binding Id}" Width="80"  IsReadOnly="True"/>
+                <DataGridTextColumn Header="起点" Binding="{Binding FocusStart}" Width="80"/>
+                <DataGridTextColumn Header="终点" Binding="{Binding FocusEnd}" Width="80"/>
+                <DataGridTextColumn Header="焦点间隔" Binding="{Binding FocusInterval}" Width="100"/>
+                <DataGridTextColumn Header="轴名" Binding="{Binding FocusAxis}" Width="80"/>
+
+                <DataGridTextColumn Header="打标起点" Binding="{Binding MarkStart}" Width="90"/>
+                <DataGridTextColumn Header="打标终点" Binding="{Binding MarkEnd}" Width="90"/>
+                <DataGridTextColumn Header="打标间隔" Binding="{Binding MarkInterval}" Width="85"/>
+                <DataGridTextColumn Header="打标轴" Binding="{Binding MarkAxis}" Width="80"/>
+                <DataGridTextColumn Header="距离Y" Binding="{Binding LaserYDis}" Width="80"   Visibility="Hidden"/>
+                <DataGridTextColumn Header="距离X" Binding="{Binding LaserXDis}" Width="80"   Visibility="Hidden"/>
+                <DataGridTextColumn Header="距离Z" Binding="{Binding LaserZDis}" Width="80"   Visibility="Hidden"/>
+                <DataGridTextColumn Header="间距" Binding="{Binding StartZ}" Width="80"/>
+                <DataGridCheckBoxColumn Header="是否焦点区间" Binding="{Binding IsFocusRange}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- 主表按钮 -->
+        <StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Right" Margin="0,0,0,10">
+            <Button Content="删除" Width="90" Margin="6,0"
+                    Command="{Binding DeleteSelectedMasterCommand}"/>
+            <Button Content="保存" Width="90" Margin="6,0"
+                    Command="{Binding SaveMainCommand}"/>
+            
+            <Button Content="生成" Width="90" Margin="6,0"
+        Command="{Binding DetailCommand}"/>
+            <Button Content="运行" Width="90" Margin="6,0"
+        Command="{Binding RunCommand}"/>
+        </StackPanel>
+
+        <!-- ========================= -->
+        <!-- 子表（自动根据主表生成）   -->
+        <!-- ========================= -->
+        <DataGrid Grid.Row="6" ItemsSource="{Binding FilteredDetails}"
+                  SelectedItem="{Binding SelectedDetail}"
+                  AutoGenerateColumns="False" CanUserAddRows="False">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="编号" Binding="{Binding DetailId}" Width="60"/>
+                <DataGridTextColumn Header="主编号" Binding="{Binding MasterId}" Width="90"/>
+                <DataGridTextColumn Header="焦点轴位置" Binding="{Binding AxisPosition}" Width="120"/>
+                <DataGridTextColumn Header="焦点轴" Binding="{Binding FocusAxis}" Width="80"/>
+                <DataGridTextColumn Header="焦点间隔" Binding="{Binding FocusInterval}" Width="100"/>
+
+                <DataGridTextColumn Header="打标轴名" Binding="{Binding MarkAxis}" Width="100"/>
+                <DataGridTextColumn Header="打标间隔" Binding="{Binding MarkInterval}" Width="100"/>
+                <DataGridTextColumn Header="打标位置" Binding="{Binding MarkPosition}" Width="100"/>
+                <DataGridTextColumn Header="距离Y" Binding="{Binding LaserYDis}" Width="80"  Visibility="Hidden"/>
+                <DataGridTextColumn Header="距离X" Binding="{Binding LaserXDis}" Width="80"  Visibility="Hidden"/>
+                <DataGridTextColumn Header="距离Z" Binding="{Binding LaserZDis}" Width="80"  Visibility="Hidden"/>
+                <DataGridTemplateColumn Header="操作" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="移动查看" Width="110"
+                                    Command="{Binding DataContext.DetailMoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridCheckBoxColumn Header="是否焦点" Binding="{Binding IsFocus}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- 子表按钮 -->
+        <StackPanel Orientation="Horizontal" Grid.Row="7" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="移动到打标位" Width="120" Margin="6,0"
+        Command="{Binding SelectedScanCommand}"/>
+            <Button Content="删除" Width="90" Margin="6,0"
+                    Command="{Binding DeleteSelectedDetailCommand}"/>
+            <Button Content="保存" Width="90" Margin="6,0"
+                    Command="{Binding SaveSubCommand}"/>
+        </StackPanel>
+
+   
+    </Grid>
+</UserControl>

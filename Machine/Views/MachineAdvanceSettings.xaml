@@ -1,0 +1,200 @@
+﻿<UserControl x:Class="Machine.Views.MachineAdvanceSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:base_converter="clr-namespace:SharedResource.convertors;assembly=SharedResource"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:local="clr-namespace:Machine.Views"
+             xmlns:convertor="clr-namespace:Machine.Converters"
+             xmlns:base_enum="clr-namespace:SharedResource.enums;assembly=SharedResource"
+             mc:Ignorable="d"
+             FontSize="16"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <base_converter:InfConverter x:Key="InfConverter"/>
+        <base_converter:BooleanToContentConvertor x:Key="BooleanToContentConvertor"/>
+        <convertor:ValueEqualConverter x:Key="ValueEqualConverter"/>
+        <convertor:AxisName2LimitEnableConverter x:Key="AxisName2LimitEnableConverter"/>
+        <base_converter:DeviceStatusToBooleanConverter x:Key="DeviceStatusToBooleanConverter"/>
+        <base_converter:DeviceStatusToEnableConvertor x:Key="DeviceStatusToEnableConvertor"/>
+        <base_converter:DeviceStatusToVisibilityConvertor x:Key="DeviceStatusToVisibilityConvertor"/>
+        <base_converter:DeviceStatusToContentConverter x:Key="DeviceStatusToContentConvertor"/>
+
+        <Style TargetType="TextBlock" x:Key="TextBlockStyle">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Width" Value="80"/>
+        </Style>
+        <Style TargetType="TextBox" x:Key="TextBoxStyle">
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="MinWidth" Value="50"/>
+            <Setter Property="Width" Value="90"/>
+            <Setter Property="InputMethod.IsInputMethodEnabled" Value="False"/>
+            <EventSetter Event="LostFocus" Handler="TextBox_LostFocus"/>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel>
+        <Border Background="#80e6e6e6" CornerRadius="5" Height="100" VerticalAlignment="Top">
+            <StackPanel>
+                <Label FontWeight="Heavy" FontSize="21" Margin="0 10">机床连接</Label>
+
+                <StackPanel Orientation="Horizontal" Margin="20 0">
+                    <StackPanel Orientation="Horizontal">
+                        <Label>I P :</Label>
+                        <TextBox BorderBrush="Gray" BorderThickness="1"
+                                 Padding="1" MinWidth="100"
+                                 Text="{Binding MachineVM.Ip}"
+                                 InputMethod.IsInputMethodEnabled="False"
+                                 IsEnabled="{Binding MachineVM.DeviceStatus, Converter={StaticResource ValueEqualConverter}, ConverterParameter={x:Static base_enum:DeviceStatus.Disconnected}}"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"></TextBox>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="20 0">
+                        <Label>Port :</Label>
+                        <TextBox BorderBrush="Gray" BorderThickness="1"
+                                 Padding="1" MinWidth="100"
+                                 Text="{Binding MachineVM.Port}"
+                                 InputMethod.IsInputMethodEnabled="False"
+                                 IsEnabled="{Binding MachineVM.DeviceStatus, Converter={StaticResource ValueEqualConverter}, ConverterParameter={x:Static base_enum:DeviceStatus.Disconnected}}"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"></TextBox>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="20 0">
+                        <!--<ToggleButton x:Name="MachineConnectbtn"
+                                      Height="30" IsChecked="{Binding MachineVM.DeviceStatus, Mode=OneWay, Converter={StaticResource DeviceStatusToBooleanConverter}}"
+                                      Command="{Binding MachineVM.ToggleConnectionCommand}"
+                                      IsEnabled="{Binding MachineVM.DeviceStatus, Mode=OneWay, Converter={StaticResource DeviceStatusToEnableConvertor}}">
+                        </ToggleButton>-->
+                        <Button Width="100"
+                                Command="{Binding MachineVM.ToggleConnectionCommand}"
+                                IsEnabled="{Binding MachineVM.DeviceStatus, Mode=OneWay, Converter={StaticResource DeviceStatusToEnableConvertor}}"
+                                Content="{Binding MachineVM.DeviceStatus, Mode=OneWay, Converter={StaticResource DeviceStatusToContentConvertor}}"></Button>
+                        <ProgressBar IsIndeterminate="True"
+                                     Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                     Visibility="{Binding MachineVM.DeviceStatus, Mode=OneWay, Converter={StaticResource DeviceStatusToVisibilityConvertor}}"
+                                     Value="70" Margin="5 0"
+                                     ></ProgressBar>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Grid Height="15"></Grid>
+
+        <Border Background="#80e6e6e6" CornerRadius="5" Height="auto" VerticalAlignment="Top">
+            <StackPanel>
+                <Label FontWeight="Heavy" FontSize="21" Margin="0 10">轴配置</Label>
+
+                <Grid Height="auto" Margin="20 0 0 20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="7*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                        <!--<RowDefinition Height="40"/>-->
+                        <!--<RowDefinition Height="40"/>-->
+                    </Grid.RowDefinitions>
+
+                    <!--<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">回零</TextBlock>-->
+                    <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">名称</TextBlock>
+                    <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">轴号</TextBlock>
+                    <!--<TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">最大速度</TextBlock>-->
+                    <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">负限位</TextBlock>
+                    <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">正限位</TextBlock>
+                    <!--<TextBlock Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">原点偏移</TextBlock>-->
+
+                    <ItemsControl ItemsSource="{Binding MachineVM.Axes}" Grid.Row="0" Grid.RowSpan="10" Grid.Column="1" Margin="10,0,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Width="110">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <!--<RowDefinition/>-->
+                                        <!--<RowDefinition/>-->
+                                    </Grid.RowDefinitions>
+
+                                    <!--<Button Style="{StaticResource MaterialDesignIconForegroundButton}" Padding="0"
+                                            Command="{Binding HomeCommand}" ToolTip="回零"
+                                            HorizontalAlignment="Center">
+                                        <materialDesign:PackIcon Kind="Home" Height="30" Width="30"/>
+                                    </Button>-->
+                                    <TextBox Text="{Binding Name}" Grid.Row="0" Margin="2" VerticalContentAlignment="Center" IsReadOnly="True"/>
+                                    <TextBox IsEnabled="False" Text="{Binding NodeNum}" Grid.Row="1" Margin="2" VerticalContentAlignment="Center"/>
+                                    <!--<TextBox Text="{Binding Speed}" Grid.Row="1" Margin="2" VerticalContentAlignment="Center"/>-->
+                                    <TextBox Text="{Binding SoftLimitMin, Converter={StaticResource InfConverter}, TargetNullValue=inf}" 
+                                             Grid.Row="2" Margin="2" VerticalContentAlignment="Center" 
+                                             IsEnabled="{Binding Name, Converter={StaticResource AxisName2LimitEnableConverter}}"/>
+                                    <TextBox Text="{Binding SoftLimitMax, Converter={StaticResource InfConverter}, TargetNullValue=inf}" 
+                                             Grid.Row="3" Margin="2" VerticalContentAlignment="Center" 
+                                             IsEnabled="{Binding Name, Converter={StaticResource AxisName2LimitEnableConverter}}"/>
+                                    <!--<local:TextBlockWithButton IsEnabled="True" MyText="{Binding AxisOffset, StringFormat={}{0:0.####}, Mode=TwoWay}" 
+                                                               MyCommand="{Binding GetAxisOffsetPosition}" 
+                                                               MyToolTip="取当前坐标" 
+                                                               InputMethod.IsInputMethodEnabled="False" 
+                                                                Margin="2" Grid.Row="4"/>-->
+                                    <!--<ComboBox IsEnabled="False" Grid.Row="7"  Style="{StaticResource ComboBoxStyle}" Width="90"
+                      SelectedValue="{Binding AxisReverseFlag}" ItemsSource="{StaticResource ComboBoxSource}"/>-->
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+
+                <!--<Grid Margin="5">
+                    <WrapPanel Width="700" HorizontalAlignment="Left" Margin="35,0,0,0">
+                        <StackPanel Orientation="Vertical" Margin="0,5,0,8">
+                            <StackPanel Orientation="Horizontal" Width="auto">
+                                <TextBlock Text="公式文件：" Width="80" Style="{StaticResource TextBlockStyle}" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding MachineVM.FormulaFile.Value, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Style="{StaticResource TextBoxStyle}" MinWidth="233" MaxWidth="380" Margin="2"
+                         IsEnabled="{Binding MachineVM.DeviceStatus, Converter={StaticResource ValueEqualConverter}, ConverterParameter={x:Static base_enum:DeviceStatus.Disconnected}}"
+                         ToolTip="{Binding MachineVM.FormulaFile.Description}"/>
+                                <Button Width="90" Height="28" Content="浏览" Command="{Binding ChangeFormulaFileCommand}" Margin="20,3,5,3"
+                        IsEnabled="{Binding MachineVM.DeviceStatus, Converter={StaticResource ValueEqualConverter}, ConverterParameter={x:Static base_enum:DeviceStatus.Disconnected}}"/>
+                                
+                            </StackPanel>
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding MachineVM.OffsetSettings.XTX, UpdateSourceTrigger=PropertyChanged}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Width="40" Text="{Binding Name}" Style="{StaticResource TextBlockStyle}" Margin="15,0,0,0"/>
+                        <TextBox Text="{Binding Value, StringFormat={}{0:0.####}}" Style="{StaticResource TextBoxStyle}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+                    </WrapPanel>
+                </Grid>-->
+            </StackPanel>
+        </Border>
+    </StackPanel>
+
+</UserControl>

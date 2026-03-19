@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="ExternalIOManager.Views.IOMegDisplay"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ExternalIOManager.Views"
+             xmlns:vm="clr-namespace:ExternalIOManager.ViewModels"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:converters="clr-namespace:ExternalIOManager.converters"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:BooleanToColorConverter x:Key="BooleanToColorConverter"/>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Horizontal">
+        <Border BorderBrush="#e3e3e3" BorderThickness="1.5" Margin="5 25"/>
+
+        <UniformGrid Rows="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <!-- 红灯 -->
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Ellipse Width="32" Height="32" Margin="0,0,10,0">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{Binding DeviceStatus.RedLamp, Converter={StaticResource BooleanToColorConverter}, ConverterParameter=Red, FallbackValue=Gray}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock Text="红灯" FontSize="17" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- 黄灯 -->
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Ellipse Width="32" Height="32" Margin="0,0,10,0">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{Binding DeviceStatus.YellowLamp, Converter={StaticResource BooleanToColorConverter}, ConverterParameter=Yellow, FallbackValue=Gray}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock Text="黄灯" FontSize="17" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- 急停按钮 -->
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Rectangle Width="32" Height="32" Margin="0,0,10,0" RadiusX="5" RadiusY="5">
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="{Binding DeviceStatus.EmergencyStop, Converter={StaticResource BooleanToColorConverter}, ConverterParameter=DarkRed, FallbackValue=Gray}"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <TextBlock Text="急停按钮" FontSize="17" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- 绿灯 -->
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Ellipse Width="32" Height="32" Margin="0,0,10,0">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{Binding DeviceStatus.GreenLamp, Converter={StaticResource BooleanToColorConverter}, ConverterParameter=Green, FallbackValue=Gray}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock Text="绿灯" FontSize="17" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- 警报器 -->
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Ellipse Width="32" Height="32" Margin="0,0,10,0">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{Binding DeviceStatus.Alarm, Converter={StaticResource BooleanToColorConverter}, ConverterParameter=Orange, FallbackValue=Gray}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock Text="警报器" FontSize="17" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- 门状态 -->
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Rectangle Width="32" Height="32" Margin="0,0,10,0" RadiusX="5" RadiusY="5">
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="{Binding DeviceStatus.DoorOpen, Converter={StaticResource BooleanToColorConverter}, ConverterParameter=Blue, FallbackValue=Gray}"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <TextBlock Text="门状态" FontSize="17" VerticalAlignment="Center"/>
+            </StackPanel>
+        </UniformGrid>
+        <Border BorderBrush="#e3e3e3" BorderThickness="1.5" Margin="5 25"/>
+    </StackPanel>
+</UserControl>

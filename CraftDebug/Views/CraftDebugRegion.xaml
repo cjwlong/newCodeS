@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="CraftDebug.Views.CraftDebugRegion"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CraftDebug.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:RegionManage="clr-namespace:SharedResource.libs;assembly=SharedResource"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             d:DesignHeight="100" d:DesignWidth="200">
+    <Grid Margin="10 0">
+        <materialDesign:Card>
+            <TabControl TabStripPlacement="Left"
+                        materialDesign:ColorZoneAssist.Background=" #7CA000"
+                        materialDesign:ColorZoneAssist.Mode="SecondaryMid"
+                        Height="auto">
+                <TabItem    
+        Header="步骤 1">
+                    <ContentControl Grid.Column="1"
+                        Margin="10 -5"
+                        prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.CraftDebugStep1_Region}"/>
+                </TabItem>
+                <TabItem    
+Header="步骤 2">
+                    <ContentControl Grid.Column="1"
+                Margin="10 -5"
+                prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.CraftDebugStep2_Region}"/>
+                </TabItem>
+                <TabItem    
+                    Header="步骤 3">
+                    <ContentControl Grid.Column="1"
+                                    Margin="10 -5"
+                                    prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.CraftDebugStep3_Region}"/>
+                </TabItem>
+                <TabItem
+                    Header="步骤 4">
+                    <ContentControl Grid.Column="1"
+                                    Margin="10 -5"
+                                    prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.CraftDebugStep4_Region}"/>
+                </TabItem>
+            </TabControl>
+        </materialDesign:Card>
+
+    </Grid>
+</UserControl>

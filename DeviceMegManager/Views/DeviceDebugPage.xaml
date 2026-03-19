@@ -1,0 +1,135 @@
+﻿<UserControl x:Class="DeviceMegManager.Views.DeviceDebugPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DeviceMegManager.Views"
+              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             xmlns:prism="http://prismlibrary.com/" xmlns:RegionManage="clr-namespace:SharedResource.libs;assembly=SharedResource"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Border BorderBrush="#4d4d4d" BorderThickness="0.5">
+            <materialDesign:Card>
+                <TabControl Style="{StaticResource MaterialDesignNavigationRailTabControl}"
+                         TabStripPlacement="Left" Background="#ffffff" Cursor="">
+                    <!--<TabItem Height="100">
+                        <TabItem.Header>
+                            <StackPanel Width="auto" Height="auto">
+                                <materialDesign:PackIcon Width="24" Height="24"
+                                                  HorizontalAlignment="Center" Kind="BenchBack"/>
+                                <TextBlock HorizontalAlignment="Center" 
+                                    Text="机床调试" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid Margin="16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="17*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <ContentControl Grid.Row="0" prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.ACSDebug_Region}"/>
+                     
+                        </Grid>
+                    </TabItem>-->
+
+                    <TabItem Height="100">
+                        <TabItem.Header>
+                            <StackPanel Width="auto" Height="auto">
+                                <materialDesign:PackIcon Width="24" Height="24"
+                                                      HorizontalAlignment="Center" Kind="Printer3dNozzle"/>
+                                <TextBlock HorizontalAlignment="Center"
+                                        Text="激光焦点" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid Margin="16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="17*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.PositionDebug_Region}"/> 
+                        
+                        </Grid>
+                    </TabItem>
+
+                    <!--<TabItem>
+                        <TabItem.Header>
+                            <StackPanel Width="auto" Height="auto">
+                                <materialDesign:PackIcon Width="24" Height="24"
+                                                      HorizontalAlignment="Center" Kind="Camera"/>
+                                <TextBlock HorizontalAlignment="Center"
+                                        Text="相机" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid Margin="16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="17*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            --><!--<ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.CameraSetting_Region}"/>--><!--
+                            <Button Grid.Row="1" HorizontalAlignment="Right" Margin="10 0">保存</Button>
+                        </Grid>
+                    </TabItem>-->
+
+                    <!--<TabItem>
+                        <TabItem.Header>
+                            <StackPanel Width="auto" Height="auto">
+                                <materialDesign:PackIcon Width="24" Height="24"
+                                                      HorizontalAlignment="Center" Kind="Toslink"/>
+                                <TextBlock HorizontalAlignment="Center"
+                                        Text="测距仪" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid Margin="16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="17*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            --><!--<ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.RangeFinderSetting_Region}"/>--><!--
+                            <Button Grid.Row="1" HorizontalAlignment="Right" Margin="10 0"
+                                 Command="{Binding SaveSettingsCommand}"
+                                 CommandParameter="测距仪">保存</Button>
+                        </Grid>
+                    </TabItem>-->
+
+                    <TabItem Height="100">
+                        <TabItem.Header>
+                            <StackPanel Width="auto" Height="auto">
+                                <materialDesign:PackIcon Width="24" Height="24"
+                                                      HorizontalAlignment="Center" Kind="MapMarkerDistance"/>
+                                <TextBlock HorizontalAlignment="Center"
+                                        Text="位置调试" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid Margin="16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="17*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.LaserDebug_Region}"/>
+                            
+                        </Grid>
+                    </TabItem>
+
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Width="auto" Height="auto">
+                                <materialDesign:PackIcon Width="24" Height="24"
+                       HorizontalAlignment="Center" Kind="MapMarkerRadius"/>
+                                <TextBlock HorizontalAlignment="Center"
+                                        Text="点位调试" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <Grid Margin="16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="17*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.AbPositionDebug_Region}"/>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </materialDesign:Card>
+        </Border>
+    </Grid>
+</UserControl>

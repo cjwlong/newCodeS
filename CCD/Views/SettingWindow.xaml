@@ -1,0 +1,42 @@
+﻿<Window x:Class="CCD.Views.SettingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CCD.Views"
+        mc:Ignorable="d"
+        Loaded="Window_Loaded" 
+        Closed="Window_Closed"
+        Title="SettingWindow" Height="300" Width="300">
+    <Grid>
+        <StackPanel Margin="10">
+            <StackPanel Margin="3">
+                <Label Name="laEX" Content="曝光时间:"/>
+                <TextBox x:Name="tbExposureTime" />
+                <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
+                    <Label  Content="调节方式:"/>
+                    <ComboBox x:Name="comboBox1" SelectionChanged="comboBox1_SelectionChanged">
+                        <ComboBoxItem Content="手动" Tag="0"/>
+                        <ComboBoxItem Content="一次" Tag="1"/>
+                        <ComboBoxItem Content="持续" Tag="2"/>
+                    </ComboBox>
+                    <Button x:Name="apply1"  Content="Apply" Click="BtnApply_Click" Margin="30,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="3">
+                <Label Name="laGain" Content="增益:"/>
+                <TextBox x:Name="tbGain"/>
+                <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
+                    <Label  Content="调节方式:"/>
+                    <ComboBox x:Name="comboBox2" SelectionChanged="comboBox2_SelectionChanged">
+                        <ComboBoxItem Content="手动" Tag="0"/>
+                        <ComboBoxItem Content="一次" Tag="1"/>
+                        <ComboBoxItem Content="持续" Tag="2"/>
+                    </ComboBox>
+                    <Button x:Name="apply2" Content="Apply" Click="Button_Click" Margin="30,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

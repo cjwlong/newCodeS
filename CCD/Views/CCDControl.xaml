@@ -1,0 +1,588 @@
+﻿<UserControl x:Class="CCD.Views.CCDControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CCD.Views"
+             xmlns:shapes="clr-namespace:CCD.shapes"
+             xmlns:CCDcontrol="clr-namespace:CCD.Controls"
+             xmlns:convertor="clr-namespace:CCD.convertors"
+             xmlns:base_convertor="clr-namespace:SharedResource.convertors;assembly=SharedResource"
+             xmlns:vm="clr-namespace:CCD.ViewModels"
+             xmlns:em="clr-namespace:CCD.enums"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+              xmlns:local2="clr-namespace:CCD.Controls"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <convertor:ImageSizeConvort x:Key="ImageSizeConvort"/>
+        <convertor:EnumToBooleanConverter x:Key="enumToBool"/>
+        <convertor:DoubleToPercentageConverter x:Key="dobleToPercentage"/>
+        <convertor:ObjectToBoolConvert x:Key="obConvert"/>
+        <convertor:BooleanToVisibilityConverter x:Key="booleanToVisibility"/>
+        <convertor:CameraStatusToPauseButtonEnabledConverter x:Key="cameraStatusToPauseButtonEnabled"/>
+        <convertor:CameraStatusToBtnContentConvertor x:Key="CameraStatusToBtnContentConvertor"/>
+        <convertor:CameraStatusToVisibilityConvertor x:Key="CameraStatusToVisibilityConvertor"/>
+        <base_convertor:BooleanToOppositeConvertor x:Key="BooleanToOppositeConvertor"/>
+
+        <Style x:Key="ToggleButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Content" Value="+" />
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Width" Value="15"/>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Content" Value="-" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="ReusableTextBlockStyle">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,5,0,5"/>
+            <!-- 添加其他样式设置 -->
+        </Style>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <vm:CCDControlViewModel x:Name="ViewModel"/>
+    </UserControl.DataContext>
+    <Grid x:Name="CanvasGrid" Grid.Row="1" IsEnabled="{Binding IsInFocus, Converter={StaticResource BooleanToOppositeConvertor}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border BorderBrush="#4d4d4d" BorderThickness="0.5 1 0.5 1">
+            <Grid Grid.Column="0">
+                <TabControl>
+
+
+                    <TabItem Header="功能" Background="#1f1f1f" FontSize="17" TabIndex="0"  >
+                        <StackPanel>
+                          
+
+                            <StackPanel Background="#f1f1f1" Margin="5 10" Height="210">
+                                <Label FontSize="17" FontWeight="Heavy">辅助对焦</Label>
+
+                                <StackPanel Orientation="Horizontal" 
+               Margin="0 10 0 5"
+               HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14"
+                  Width="90">曝光时间：</TextBlock>
+
+
+                                    <Grid Width="5"></Grid>
+                                   
+
+                                    <TextBox Width="50" Style="{StaticResource MaterialDesignOutlinedTextBox}" Padding="1" FontSize="14"
+          Text="{Binding TimeOfExp}"></TextBox>
+
+                                </StackPanel>
+                                
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0 10 0 5"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14"
+                                               Width="90">距离(mm)：</TextBlock>
+                                   
+
+                                    <Grid Width="5"></Grid>
+                                    <TextBox Width="50" Style="{StaticResource MaterialDesignOutlinedTextBox}" Padding="1" FontSize="14"
+                                             Text="{Binding FocusDistance}"></TextBox>
+                                    
+                                   
+
+                                </StackPanel>
+                                
+                                <StackPanel Orientation="Horizontal" 
+                                            Margin="0 5 0 10"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14"
+                                               Width="90">速   度 ：</TextBlock>
+                                    <Grid Width="5"></Grid>
+                                    <TextBox Width="50" Style="{StaticResource MaterialDesignOutlinedTextBox}" Padding="1" FontSize="14"
+                                             Text="{Binding FocusSpeed}"></TextBox>
+                                </StackPanel>
+                                <Button Width="70" Padding="2" Background="#bababa" FontSize="14"
+                                        Command="{Binding FocusCommand}"
+                                       >自动对焦</Button>
+                                <!--<Grid Height="10"></Grid>
+                                <Button Width="70" Padding="2" Background="#bababa" FontSize="14"
+                                        Command="{Binding FindPeakCommand}"
+                                        IsEnabled="{Binding CameraState, Converter={StaticResource cameraStatusToPauseButtonEnabled}}">顶点矫正</Button>-->
+                            </StackPanel>
+                            <Grid Background="#f1f1f1" Margin="5 10" Visibility="Hidden">
+                                <StackPanel  Visibility="Hidden">
+                                    <Label FontSize="17" FontWeight="Heavy">相机标定</Label>
+                                    <Button  Margin="0 10" Width="70" Padding="2" Background="#bababa" FontSize="14"
+                   materialDesign:ButtonAssist.CornerRadius="15"
+                   Click="CaliWindow_Click" Cursor="Hand">相机标定</Button>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem Header="工具" Background="#1f1f1f"  IsSelected="True">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="1.7*"/>
+                            </Grid.RowDefinitions>
+
+                            <UniformGrid Columns="2" Background="#f1f1f1" Cursor="">
+                                
+                                <RadioButton Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#1f1f1f"
+                            ToolTip="移动"
+                            Checked="RadioButton_Checked"
+                            IsChecked="{Binding ShapeEnum, Converter={StaticResource enumToBool}, ConverterParameter={x:Static em:ShapeEnum.None}}">
+                                    <materialDesign:PackIcon Kind="CursorMove" />
+                                </RadioButton>
+                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=IsCalibrationMode}" Visibility="Hidden">标定模式</CheckBox>
+                                <RadioButton Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#1f1f1f"
+                            ToolTip="定位点"
+                            Checked="RadioButton_Checked" 
+                            IsChecked="{Binding ShapeEnum, Converter={StaticResource enumToBool}, ConverterParameter={x:Static em:ShapeEnum.LocationPoint}}">
+                                    <materialDesign:PackIcon Kind="Adjust" />
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#1f1f1f"
+                            ToolTip="直线"
+                            Checked="RadioButton_Checked"
+                            IsChecked="{Binding ShapeEnum, Converter={StaticResource enumToBool}, ConverterParameter={x:Static em:ShapeEnum.Line}}">
+                                    <materialDesign:PackIcon Kind="VectorLine" />
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#1f1f1f"
+                            ToolTip="平行线"
+                            Checked="RadioButton_Checked"
+                            IsChecked="{Binding ShapeEnum, Converter={StaticResource enumToBool}, ConverterParameter={x:Static em:ShapeEnum.ParallelLines}}">
+                                    <materialDesign:PackIcon Kind="MathNorm" />
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#1f1f1f"
+                            ToolTip="角度测量"
+                            Checked="RadioButton_Checked"
+                            IsChecked="{Binding ShapeEnum, Converter={StaticResource enumToBool}, ConverterParameter={x:Static em:ShapeEnum.IntersectionLines}}">
+                                    <materialDesign:PackIcon Kind="VectorPolyline" />
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#1f1f1f"
+                            ToolTip="圆"
+                            Checked="RadioButton_Checked"
+                            IsChecked="{Binding ShapeEnum, Converter={StaticResource enumToBool}, ConverterParameter={x:Static em:ShapeEnum.Circle}}">
+                                    <materialDesign:PackIcon Kind="CircleOutline" />
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#1f1f1f"
+                            ToolTip="三点画圆"
+                            Checked="RadioButton_Checked"
+                            IsChecked="{Binding ShapeEnum, Converter={StaticResource enumToBool}, ConverterParameter={x:Static em:ShapeEnum.PointCircle}}">
+                                    <materialDesign:PackIcon Kind="GoogleCirclesCommunities" />
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#1f1f1f"
+                            ToolTip="圆形轮廓"
+                            Checked="RadioButton_Checked"
+                            IsChecked="{Binding ShapeEnum, Converter={StaticResource enumToBool}, ConverterParameter={x:Static em:ShapeEnum.CircleContour}}">
+                                    <materialDesign:PackIcon Kind="CircleDouble" />
+                                </RadioButton>
+                                <RadioButton Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineRadioButton}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="#1f1f1f"
+                            ToolTip="矩形"
+                            Checked="RadioButton_Checked"
+                            IsChecked="{Binding ShapeEnum, Converter={StaticResource enumToBool}, ConverterParameter={x:Static em:ShapeEnum.Rectangle}}">
+                                    <materialDesign:PackIcon Kind="VectorRectangle" />
+                                </RadioButton>
+                            </UniformGrid>
+
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="10*"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <Grid>
+                                    <ListView Name="listView1"
+                             ItemsSource="{Binding ElementName=canvas, Path=Shapes}" 
+                             MouseLeftButtonDown="ListView1_MouseLeftButtonDown" 
+                             SelectionChanged="ListView1_SelectionChanged"
+                             SelectionMode="Extended">
+                                        <ListView.Resources>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="IsSelected" Value="{Binding IsSelect}" />
+                                            </Style>
+
+                                            <ContextMenu x:Key="ListViewContextMenu">
+                                                <MenuItem Header="删除" 
+                                         IsEnabled="{Binding SelectShapes.Count, Converter={StaticResource obConvert}}" 
+                                         Click="Deletloc_Click" />
+                                            </ContextMenu>
+
+                                            <DataTemplate DataType="{x:Type shapes:Line}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <ToggleButton Style="{StaticResource ToggleButtonStyle}" 
+                                                     Margin="0,0,3,0" IsChecked="{Binding IsExpanded}"/>
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Margin="0,5,5,0" FontWeight="Bold" Text="{Binding Name}" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                  Text="长度:" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                  Text="{Binding RealDistance, StringFormat={}{0:F3}mm}" />
+                                                    </StackPanel>
+
+                                                    <StackPanel Visibility="{Binding IsExpanded, Converter={StaticResource booleanToVisibility}}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="中点" />
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="{Binding MidPoint.MacPoint, StringFormat={}({0:F3})}" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                      Text="角度:" />
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                      Text="{Binding RealAngel, StringFormat={}{0:F3}°}" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DataTemplate>
+
+                                            <DataTemplate DataType="{x:Type shapes:Circle}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <ToggleButton Style="{StaticResource ToggleButtonStyle}" 
+                                                     Margin="0,0,3,0" IsChecked="{Binding IsExpanded}"/>
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Margin="0,5,5,0" FontWeight="Bold" Text="{Binding Name}" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                  Text="半径:" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                  Text="{Binding RealRadius, StringFormat={}{0:F3}mm}" />
+                                                    </StackPanel>
+                                                    <StackPanel Visibility="{Binding IsExpanded, Converter={StaticResource booleanToVisibility}}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                      Text="位置：" />
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="{Binding Center.MacPoint, StringFormat={}({0:F3})}" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                      Text="周长：" />
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}"
+                                                      Text="{Binding AbsolutePerimeter, StringFormat={}{0:F3} mm}" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="面积：" />
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="{Binding AbsoluteArea, StringFormat={}{0:F3} mm²}" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DataTemplate>
+
+                                            <DataTemplate DataType="{x:Type shapes:LocationPoint}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <ToggleButton Style="{StaticResource ToggleButtonStyle}"
+                                                     Margin="0,0,3,0" IsChecked="{Binding IsExpanded}"/>
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Margin="0,5,5,0" FontWeight="Bold" Text="{Binding Name}" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Text="位置:" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Text="{Binding Point.MacPoint, StringFormat={}({0:F3})}" />
+                                                    </StackPanel>
+
+                                                    <StackPanel Visibility="{Binding IsExpanded, Converter={StaticResource booleanToVisibility}}">
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DataTemplate>
+
+                                            <DataTemplate DataType="{x:Type shapes:Rectangle}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <ToggleButton Style="{StaticResource ToggleButtonStyle}" 
+                                                     Margin="0,0,3,0" IsChecked="{Binding IsExpanded}"/>
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Margin="0,5,5,0" FontWeight="Bold" Text="{Binding Name}" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Text=" 绝位置：" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}"
+                                                  Text="{Binding AbsoluteTL, StringFormat={}({0:F3})}" />
+                                                    </StackPanel>
+
+                                                    <StackPanel Visibility="{Binding IsExpanded, Converter={StaticResource booleanToVisibility}}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                      Text="宽度：" />
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="{Binding RealWeight, StringFormat={}{0:F3}}" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="高度：" />
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="{Binding RealHight, StringFormat={}{0:F3}}" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="周长：" />
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}"
+                                                      Text="{Binding AbsolutePerimeter, StringFormat={}{0:F3} mm}" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="面积：" />
+                                                            <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                      Text="{Binding AbsoluteArea, StringFormat={}{0:F3} mm²}" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DataTemplate>
+
+                                            <DataTemplate DataType="{x:Type shapes:CircleContour}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <ToggleButton Style="{StaticResource ToggleButtonStyle}" 
+                                                     Margin="0,0,3,0" IsChecked="{Binding IsExpanded}"/>
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Margin="0,5,5,0" FontWeight="Bold" Text="{Binding Name}" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Text=" 位置：" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Text="{Binding AbsoluteCenter, StringFormat={}({0:F3})}" />
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DataTemplate>
+
+                                            <DataTemplate DataType="{x:Type shapes:SquareContour}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <ToggleButton Style="{StaticResource ToggleButtonStyle}" 
+                                                     Margin="0,0,3,0" IsChecked="{Binding IsExpanded}"/>
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}"
+                                                  Margin="0,5,5,0" FontWeight="Bold" Text="{Binding Name}" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Text=" 位置：" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}"
+                                                  Text="{Binding AbsoluteCenter, StringFormat={}({0:F3})}" />
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DataTemplate>
+
+                                            <DataTemplate DataType="{x:Type shapes:ParallelLines}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <ToggleButton Style="{StaticResource ToggleButtonStyle}"
+                                                     Margin="0,0,3,0" IsChecked="{Binding IsExpanded}"/>
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Margin="0,5,5,0" FontWeight="Bold" Text="{Binding Name}" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}"  
+                                                  Text="距离:" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Text="{Binding LinesDistance, StringFormat={}{0:F3}mm}" />
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DataTemplate>
+
+                                            <DataTemplate DataType="{x:Type shapes:IntersectionLines}">
+                                                <StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <ToggleButton Style="{StaticResource ToggleButtonStyle}" 
+                                                     Margin="0,0,3,0" IsChecked="{Binding IsExpanded}"/>
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Margin="0,5,5,0" FontWeight="Bold" Text="{Binding Name}" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Text="角度:" />
+                                                        <TextBlock Style="{StaticResource ReusableTextBlockStyle}" 
+                                                  Text="{Binding RealAngel, StringFormat={}{0:F3}°}" />
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DataTemplate>
+
+                                        </ListView.Resources>
+
+                                        <ListView.ContextMenu>
+                                            <StaticResource ResourceKey="ListViewContextMenu"/>
+                                        </ListView.ContextMenu>
+                                    </ListView>
+                                </Grid>
+
+                                <UniformGrid Rows="1" Grid.Row="1">
+                                    <!--<Button x:Name="Deletloc" FontSize="15" Background="LightGray"  Width="75" Content="删除" Margin="3" IsEnabled="{Binding SelectShapes.Count, Converter={StaticResource obConvert}}" Click="Deletloc_Click"/>-->
+                                    <Button x:Name="Clearloc"
+                           Background="LightGray"  Margin="-4 0 0 0"
+                           HorizontalAlignment="Center"
+                           Padding="10 0"
+                           Height="25"
+                           Content="清空" Click="Clearloc_Click" Cursor="Hand"/>
+                                    <Button x:Name="Saveloc"
+                           Padding="10 0"  Margin="-15 0 0 0"
+                           Height="25"
+                           Background="LightGray" 
+                           HorizontalAlignment="Center"
+                           Content="保存" Click="Saveloc_Click" Cursor="Hand"/>
+                                    <Button   Padding="4 0"  Margin="-6 0 0 0"
+ Height="25"  Background="LightGray" 
+         
+          Click="CaliWindow_Click" Cursor="Hand">相机标定</Button>
+                                </UniformGrid>
+                            </Grid>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="15*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.RowDefinitions>
+            
+                    <RowDefinition Height="27*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+              
+                <GroupBox  SizeChanged="ImageViewer_SizeChanged" x:Name="ImageContainer" Grid.Row="0"
+                          
+                          Style="{StaticResource MaterialDesignHeaderedContentControl}">
+
+                    <GroupBox.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="相机" Foreground="Black" Margin="0,0,5,0"/>
+                            <local2:AxisArrowControl x:Name="axisArrow"
+                                     Width="40"
+                                     Height="40"/>
+                            <TextBlock Text="运动轴" Foreground="Black" Margin="0,0,5,0"/>
+                            <local2:MoveAxisControl x:Name="axisMoveArrow"
+            Width="30"
+            Height="30"/>
+                        </StackPanel>
+                    </GroupBox.Header>
+                    <ScrollViewer x:Name="ImageViewer" Height="800"  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Grid  HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <CCDcontrol:ImgCanvas x:Name="canvas"  Cursor="Cross"
+                                                  Background="{Binding CanvasBackground}" 
+                                                  Panel.ZIndex="1" 
+                                                  HorizontalAlignment="Left" 
+                                                  VerticalAlignment="Top"
+                                                  MouseWheel="Canvas_MouseWheel" 
+                                                  MouseDown="Canvas_MouseDown" 
+                                                  MouseMove="Canvas_MouseMove" 
+                                                  MouseUp="Canvas_MouseUp" 
+                                                  Width="{Binding InitialImageWidth}" 
+                                                  Height="{Binding InitialImageHeight}"
+                                                  RenderTransformOrigin="{Binding CanvasTransformOrigin}" 
+                                                  RenderTransform="{Binding CanvasTransform}">
+                                    <!-- Add your canvas content here -->
+                                </CCDcontrol:ImgCanvas>
+                                <Image x:Name="image" Stretch="Fill" Source="{Binding ImageBMP}" 
+                                   Panel.ZIndex="0" 
+                                   HorizontalAlignment="Left" VerticalAlignment="Top">
+                                    <Image.Width>
+                                        <MultiBinding Converter="{StaticResource ImageSizeConvort}">
+                                            <Binding Path="ImageWidth" />
+                                            <Binding Path="ScaleValue" />
+                                        </MultiBinding>
+                                    </Image.Width>
+                                    <Image.Height>
+                                        <MultiBinding Converter="{StaticResource ImageSizeConvort}">
+                                            <Binding Path="ImageHeight" />
+                                            <Binding Path="ScaleValue" />
+                                        </MultiBinding>
+                                    </Image.Height>
+                                </Image>
+                            </Grid>
+                        </ScrollViewer>
+                   
+                </GroupBox>
+                <Border Background="#e6e6e6" CornerRadius="0 0 10 10" Grid.Row="1">
+                    <StackPanel Orientation="Horizontal" Margin="10 0"  >
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontSize="13" Padding="0 3 0 0">曝光时间：</TextBlock>
+                            <TextBox FontWeight="Heavy" Width="50" BorderThickness="0" FontSize="13" 
+                                     Text="{Binding TimeOfExposure}"></TextBox>
+                            <Grid Width="20"></Grid>
+                            <!--<TextBlock FontSize="13" Padding="0 3 0 0">增益：</TextBlock>
+                            <TextBox FontWeight="Heavy" Width="50" BorderThickness="0" FontSize="13" 
+                                     Text="{Binding Gain}"></TextBox>
+                            <Grid Width="20"></Grid>-->
+                            <TextBlock FontSize="13" Padding="0 3 0 0">帧率：</TextBlock>
+                            <TextBox FontWeight="Heavy" Width="50" BorderThickness="0" FontSize="13"
+                                     Text="{Binding FrameRate}"></TextBox>
+                            <Grid Width="20"></Grid>
+                            <CheckBox x:Name="AutoExposure"
+                                      IsChecked="{Binding IsContinueExposure, Mode=TwoWay}"
+                                     >持续自动曝光</CheckBox>
+                            <Grid Width="10"></Grid>
+                            <Button Width="50" FontSize="13" Padding="10 0 0 2" 
+Background="Transparent" BorderBrush="Black" 
+Foreground="Black" Height="20"
+Command="{Binding AutoExposureCommand}">设置</Button>
+                            <Grid Width="20"></Grid>
+                            <Button Width="50" FontSize="13" Padding="0 0 0 2" 
+                                    Background="Transparent" BorderBrush="Black"
+                                    Foreground="Black" Height="20"
+                                    Command="{Binding GetCameraParamCommand}">获取曝光</Button>
+                            <Grid Width="20"></Grid>
+                            <Button Width="50" FontSize="13" Padding="0 0 0 2" 
+                                    Background="Transparent" BorderBrush="Black" 
+                                    Foreground="Black" Height="20"
+                                    Command="{Binding SetCameraParamCommand}">手动曝光</Button>
+                          
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>            
+
+            <Grid Grid.Row="1">
+                <UniformGrid Rows="1">
+                    <Button Width="100" Padding="1" IsEnabled="{Binding CameraState, Converter={StaticResource cameraStatusToPauseButtonEnabled}}"
+                            Content="{Binding CameraState, Converter={StaticResource CameraStatusToBtnContentConvertor}}"
+                            Click="openCamer_Click"></Button>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Label HorizontalAlignment="Center" VerticalAlignment="Center">参考十字线</Label>
+                        <ToggleButton HorizontalAlignment="Center" IsChecked="{Binding Path=IsCross}" Checked="CrossCheck_Checked" Unchecked="CrossCheck_Unchecked"></ToggleButton>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                        <TextBox x:Name="mouseCoordinatesTextBox"
+                                 VerticalAlignment="Center"
+                                 VerticalContentAlignment="Center"  
+                                 Margin="2" IsReadOnly="True"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" Padding="1"
+                                 Text="{Binding MouseCoordinatesText}"/>
+                        <TextBox x:Name="SocllTextBox" 
+                                 HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                 TextAlignment="Center" 
+                                 Margin="2"
+                                 IsReadOnly="True" 
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" Padding="1"
+                                 Text="{Binding ScaleValue, Converter={StaticResource dobleToPercentage}}" 
+                                 Width="60"/>
+                    </StackPanel>
+                </UniformGrid>
+            </Grid>
+        </Grid>        
+    </Grid>
+</UserControl>

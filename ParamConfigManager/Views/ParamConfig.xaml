@@ -1,0 +1,623 @@
+﻿<UserControl x:Class="ParamConfigManager.Views.ParamConfig"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ParamConfigManager.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:convertor="clr-namespace:ParamConfigManager.Convertors"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:base_convertors="clr-namespace:SharedResource.convertors;assembly=SharedResource"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             FontSize="16"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <base_convertors:BooleanToOppositeConvertor x:Key="BooleanToOppositeConvertor"/> 
+        <convertor:ReadonlyToVisibilityConvertor x:Key="ReadonlyToVisibilityConvertor"/>
+        <convertor:PointModeToDisplayInfoConverter x:Key="PointModeToDisplayInfoConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- 左侧文件列表区域 -->
+        <GroupBox Header="配置文件列表" Margin="10" Grid.Column="0">            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Margin="5" Height="28" Width="190" Padding="5 1"
+                             BorderThickness="1"
+                             TextWrapping="Wrap"
+                             Text="{Binding SearchText, Mode=TwoWay}"
+                             HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                             materialDesign:HintAssist.Hint="搜索配置文件">
+                    </TextBox>
+                    <Button Height="25" Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Command="{Binding FindFileCommand}">搜索</Button>
+                </StackPanel>
+
+
+                <ListBox Grid.Row="1" Margin="10" 
+                 ItemsSource="{Binding FilteredConfigFiles}"
+                 SelectedItem="{Binding SelectedConfigFile}"
+                 HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Margin="5"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.Resources>
+                        <ContextMenu x:Key="ItemContextMenu">
+                            <MenuItem Header="应用" 
+                                      Command="{Binding DataContext.ApplyCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                            <MenuItem Header="删除" 
+                              Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                              CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                            <MenuItem Header="导出" Command="{Binding DataContext.OutputCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+                            </MenuItem>
+                        </ContextMenu>
+                    </ListBox.Resources>
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="ContextMenu" Value="{StaticResource ItemContextMenu}"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </GroupBox>
+
+        <!-- 右侧内容区域 -->
+        <Grid Grid.Column="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- 工具栏 -->
+            <ToolBarTray Grid.Row="0">
+                <ToolBar>                    
+                    
+                    <Button Content="修改配置" Command="{Binding AmendCommand}" Margin="5,0">
+                    </Button>
+                    <Button Content="新建配置" Command="{Binding CreatCommand}" Margin="5,0">
+                    </Button>                    
+                    <Separator/>
+                    <Button Content="验证参数" Command="{Binding ValidateCommand}" Margin="5,0">
+                    </Button>                                    
+                </ToolBar>
+            </ToolBarTray>
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5 0">
+                <Button Content="导入" Command="{Binding InputCommand}"
+                        Style="{StaticResource MaterialDesignRaisedLightButton}">
+                </Button>     
+            </StackPanel>
+
+            <!-- 配置内容区域 -->
+            <ScrollViewer  Grid.Row="1" VerticalScrollBarVisibility="Hidden">
+            <StackPanel>
+                <Border BorderBrush="#c6c6c6" BorderThickness="1" CornerRadius="10" Margin="5">
+                    <Expander Height="auto" Background="Transparent"
+                              materialDesign:ExpanderAssist.ExpanderButtonPosition="Start">
+                        <Expander.Header>
+                            <UniformGrid Rows="1">
+                                <TextBlock Margin="10 0 0 0" Text="刻蚀名称设置" FontSize="17"
+                                           VerticalAlignment="Center"/>
+                                    <Button HorizontalAlignment="Right" Content="保存" 
+                                            FontSize="15" Padding="10 0"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding SaveCommand}"
+                                            CommandParameter="工艺配置"
+                                            Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                            IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}"/>
+                                </UniformGrid>                            
+                        </Expander.Header>
+                            <StackPanel>
+                                <UniformGrid Rows="2" Margin="24 -20 24 16"  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                    <TextBlock VerticalAlignment="Bottom" Text="刻蚀名称" Margin="0 3"/>
+                                    <TextBlock VerticalAlignment="Bottom" Text="球径尺寸（mm）" Margin="0 3"/>
+                                    <DockPanel>
+                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                     Text="{Binding CurrentConfig.EtchingName}"
+                                                     IsEnabled="{Binding Isamend, Converter={StaticResource BooleanToOppositeConvertor}}"/>
+                                        </Border>
+                                    </DockPanel>
+                                    <DockPanel>
+                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0">
+                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                     Text="{Binding CurrentConfig.BallDiameter}"/>
+                                        </Border>
+                                    </DockPanel>
+                                </UniformGrid>
+
+                                <Border BorderBrush="#c6c6c6" BorderThickness="1" CornerRadius="10" Margin="5">
+                                    <Expander Height="auto" Background="Transparent"
+                                              materialDesign:ExpanderAssist.ExpanderButtonPosition="Start">
+                                        <Expander.Header>
+                                            <UniformGrid Rows="1">
+                                                <TextBlock Margin="10 0 0 0" Text="激光参数设置" FontSize="17"/>
+                                                <TextBlock HorizontalAlignment="Right" Text="关键参数" FontSize="12" VerticalAlignment="Center"/>
+                                            </UniformGrid>
+                                        </Expander.Header>
+                                        <UniformGrid Rows="2" Margin="24 -20 24 16"  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                            <TextBlock VerticalAlignment="Bottom" Text="功率百分比（%）" Margin="0 3"/>
+                                            <TextBlock VerticalAlignment="Bottom" Text="频率（kHz）" Margin="0 3"/>
+                                            <TextBlock VerticalAlignment="Bottom" Text="分频数" Margin="0 3"/>
+                                            <DockPanel>
+                                                <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                    <TextBox BorderThickness="0" Margin="10 0"
+                                                             Text="{Binding CurrentConfig.LaserParameters.PowerPercentage}"/>
+                                                </Border>
+                                            </DockPanel>
+                                            <DockPanel>
+                                                <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0">
+                                                    <TextBox BorderThickness="0" Margin="10 0"
+                                                             Text="{Binding CurrentConfig.LaserParameters.Frequency}"/>
+                                                </Border>
+                                            </DockPanel>
+                                            <DockPanel>
+                                                <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0">
+                                                    <TextBox BorderThickness="0" Margin="10 0"
+                                                             Text="{Binding CurrentConfig.LaserParameters.Divider}"/>
+                                                </Border>
+                                            </DockPanel>
+                                        </UniformGrid>
+                                    </Expander>
+                                </Border>
+
+                                <Border BorderBrush="#c6c6c6" BorderThickness="1" CornerRadius="10" Margin="5">
+                                    <Expander Height="auto" Background="Transparent"
+                                              materialDesign:ExpanderAssist.ExpanderButtonPosition="Start">
+                                        <Expander.Header>
+                                            <UniformGrid Rows="1">
+                                                <TextBlock Margin="10 0 0 0" Text="轴参数设置" FontSize="17"/>
+                                                <TextBlock HorizontalAlignment="Right" Text="关键参数" FontSize="12" VerticalAlignment="Center"/>
+                                            </UniformGrid>
+                                        </Expander.Header>
+                                        <StackPanel>
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="24 0 0 10">
+                                                    <materialDesign:PackIcon Kind="Artboard"
+                                                                             Height="23" Width="23"
+                                                                             Margin="-2 0 5 0"
+                                                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <TextBlock FontSize="17">轴加工位置设置</TextBlock>
+                                                </StackPanel>
+
+                                                <UniformGrid Rows="2" Margin="24 -20 24 16"  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                                    <TextBlock VerticalAlignment="Bottom" Text="x轴加工位置" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="y轴加工位置" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="z轴加工位置" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="a轴加工位置" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="c轴加工位置" Margin="0 3"/>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.XProcessPlace}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.YProcessPlace}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.ZProcessPlace}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.AProcessPlace}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.BProcessPlace}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                </UniformGrid>
+                                            </StackPanel>
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal"  Margin="24 17 0 10">
+                                                    <materialDesign:PackIcon Kind="Autorenew" 
+                                                                             Height="23" Width="23"
+                                                                             Margin="-2 0 5 0"
+                                                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <TextBlock FontSize="17">速度设置（mm/s）</TextBlock>
+                                                </StackPanel>
+
+                                                <UniformGrid Rows="2" Margin="24 -20 24 16"  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                                    <TextBlock VerticalAlignment="Bottom" Text="x轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="y轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="z轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="a轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="c轴" Margin="0 3"/>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.XSpeed}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.YSpeed}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.ZSpeed}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.ASpeed}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.BSpeed}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                </UniformGrid>
+                                            </StackPanel>
+
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="24 17 0 10">
+                                                    <materialDesign:PackIcon Kind="BatteryPositive" 
+                                                                             Height="23" Width="23"
+                                                                             Margin="-2 0 5 0"
+                                                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <TextBlock FontSize="17">加速度设置（mm/s）</TextBlock>
+                                                </StackPanel>
+                                                <UniformGrid Columns="5" Margin="24 -20 24 16"  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                                    <TextBlock VerticalAlignment="Bottom" Text="x轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="y轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="z轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="a轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="c轴" Margin="0 3"/>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.XAccelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.YAccelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.ZAccelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.AAccelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.BAccelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                </UniformGrid>
+                                            </StackPanel>
+
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="24 17 0 10">
+                                                    <materialDesign:PackIcon Kind="BatteryNegative" 
+                                                                             Height="23" Width="23"
+                                                                             Margin="-2 0 5 0"
+                                                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    <TextBlock FontSize="17">减速度设置（mm/s）</TextBlock>
+                                                </StackPanel>
+                                                <UniformGrid Columns="5" Margin="24 -20 24 16"  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                                    <TextBlock VerticalAlignment="Bottom" Text="x轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="y轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="z轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="a轴" Margin="0 3"/>
+                                                    <TextBlock VerticalAlignment="Bottom" Text="c轴" Margin="0 3"/>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.XDecelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.YDecelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.ZDecelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.ADecelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                    <DockPanel>
+                                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0">
+                                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                                     Text="{Binding CurrentConfig.AxesParameters.BDecelerate}"/>
+                                                        </Border>
+                                                    </DockPanel>
+                                                </UniformGrid>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Expander>
+                                </Border>
+
+                                <Border BorderBrush="#c6c6c6" BorderThickness="1" CornerRadius="10" Margin="5">
+                                    <Expander Height="auto" Background="Transparent"
+                                              materialDesign:ExpanderAssist.ExpanderButtonPosition="Start">
+                                        <Expander.Header>
+                                            <UniformGrid Rows="1">
+                                                <TextBlock Margin="10 0 0 0" Text="脚本相关参数设置" FontSize="17"/>
+                                                <TextBlock HorizontalAlignment="Right" Text="高级设置" FontSize="12" VerticalAlignment="Center"/>
+                                            </UniformGrid>
+                                        </Expander.Header>
+                                        <StackPanel>
+                                            <UniformGrid Rows="2" Margin="24 -20 24 16"  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                                <TextBlock VerticalAlignment="Bottom" Text="a轴轴号" Margin="0 3"/>
+                                                <TextBlock VerticalAlignment="Bottom" Text="c轴轴号" Margin="0 3"/>
+                                                <DockPanel>
+                                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                        <TextBox BorderThickness="0" Margin="10 0"
+                                                                 Text="{Binding CurrentConfig.ScriptParameters.A}"/>
+                                                    </Border>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0">
+                                                        <TextBox BorderThickness="0" Margin="10 0"
+                                                                 Text="{Binding CurrentConfig.ScriptParameters.B}"/>
+                                                    </Border>
+                                                </DockPanel>
+                                            </UniformGrid>
+
+                                            <StackPanel Orientation="Horizontal" Margin="24 17 0 10">
+                                                <materialDesign:PackIcon Kind="CubeUnfolded"
+                                                                         Height="23" Width="23"
+                                                                         Margin="-2 0 5 0"
+                                                                         HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <TextBlock FontSize="17">刻槽参数设置</TextBlock>
+                                            </StackPanel>
+                                            <UniformGrid Columns="3" Margin="24 -20 24 16"  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                                <TextBlock VerticalAlignment="Bottom" Text="刻槽数" Margin="0 3"
+                                                           ToolTip="刻蚀的总条数"/>
+                                                <TextBlock VerticalAlignment="Bottom" Text="槽台比" Margin="0 3"
+                                                           ToolTip="设置在0.9~1.1之间"/>
+                                                <TextBlock VerticalAlignment="Bottom" Text="螺旋倾角" Margin="0 3"/>
+                                                <!--<TextBlock VerticalAlignment="Bottom" Text="刻槽间隔（mm）" Margin="0 3"/>-->
+                                                <DockPanel>
+                                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                        <TextBox BorderThickness="0" Margin="10 0"
+                                                                 Text="{Binding CurrentConfig.ScriptParameters.m_Number}"/>
+                                                    </Border>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                        <TextBox BorderThickness="0" Margin="10 0"
+                                                                 Text="{Binding CurrentConfig.ScriptParameters.m_SlotRatio}"/>
+                                                    </Border>
+                                                </DockPanel>
+                                                <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                    <TextBox BorderThickness="0" Margin="10 0"
+                                                             Text="{Binding CurrentConfig.ScriptParameters.m_SpiralDip}"/>
+                                                </Border>
+                                                <!--<DockPanel>
+                                                <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                <TextBox BorderThickness="0" Margin="10 0"
+                                                Text="{Binding CurrentConfig.ScriptParameters.CuttingInterval}"/>
+                                                </Border>
+                                                </DockPanel>-->
+                                            </UniformGrid>
+
+                                            <StackPanel Orientation="Horizontal" Margin="24 17 0 10">
+                                                <materialDesign:PackIcon Kind="CurrencySign"
+                                                                         Height="23" Width="23"
+                                                                         Margin="-2 0 5 0"
+                                                                         HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                <TextBlock FontSize="17">A轴最大运动范围设置</TextBlock>
+                                            </StackPanel>
+                                            <UniformGrid Columns="4" Margin="24 -20 24 16"  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                                <TextBlock VerticalAlignment="Bottom" Text="加工起始角度" Margin="0 3"
+                                                           ToolTip="A轴移动到加工起始点的位置"/>
+                                                <TextBlock VerticalAlignment="Bottom" Text="加工终止角度" Margin="0 3"
+                                                           ToolTip="A轴移动到加工终点的位置"/>
+                                                <TextBlock VerticalAlignment="Bottom" Text="起始位置角度" Margin="0 3"
+                                                           ToolTip=""/>
+                                                <TextBlock VerticalAlignment="Bottom" Text="终止位置角度" Margin="0 3"
+                                                           ToolTip=""/>
+                                                <!--<TextBlock VerticalAlignment="Bottom" Text="间隔角度" Margin="0 3"/>-->
+                                                <DockPanel>
+                                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                        <TextBox BorderThickness="0" Margin="10 0"
+                                                                 Text="{Binding CurrentConfig.ScriptParameters.m_StartForMachi}"/>
+                                                    </Border>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                        <TextBox BorderThickness="0" Margin="10 0"
+                                                                 Text="{Binding CurrentConfig.ScriptParameters.m_EndForMachi}"/>
+                                                    </Border>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                        <TextBox BorderThickness="0" Margin="10 0"
+                                                                 Text="{Binding CurrentConfig.ScriptParameters.m_StartForMove}"/>
+                                                    </Border>
+                                                </DockPanel>
+                                                <DockPanel>
+                                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                        <TextBox BorderThickness="0" Margin="10 0"
+                                                                 Text="{Binding CurrentConfig.ScriptParameters.m_EndForMove}"/>
+                                                    </Border>
+                                                </DockPanel>
+                                                <!--<DockPanel>
+                                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                                        <TextBox BorderThickness="0" Margin="10 0"
+                                                                 Text="{Binding CurrentConfig.ScriptParameters.IntervalAngle}"/>
+                                                    </Border>
+                                                </DockPanel>-->
+                                            </UniformGrid>
+                                        </StackPanel>
+                                    </Expander>
+                                </Border>
+                                
+                            </StackPanel>                        
+                    </Expander>
+                </Border>   
+
+                <Border BorderBrush="#c6c6c6" BorderThickness="1" CornerRadius="10" Margin="5"  Visibility="Hidden">
+                    <Expander Height="auto" Background="Transparent"
+                              materialDesign:ExpanderAssist.ExpanderButtonPosition="Start">
+                        <Expander.Header>
+                            <UniformGrid Rows="1">
+                                <TextBlock Margin="10 0 0 0" Text="点位设置" FontSize="17" VerticalAlignment="Center"/>
+                                <Button HorizontalAlignment="Right" Content="保存" 
+                                        FontSize="15" Padding="10 0"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding SaveCommand}"
+                                        CommandParameter="预设点位"
+                                        Style="{StaticResource MaterialDesignRaisedLightButton}"
+                                        IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}"/>
+                            </UniformGrid>
+                        </Expander.Header>
+                            <StackPanel>
+                                <UniformGrid Rows="2" Margin="24 0 24 20">
+                                    <TextBlock VerticalAlignment="Center">点位名称</TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock VerticalAlignment="Center">点位模式：</TextBlock>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Text="{Binding CurrentPosition.IsAbsolute, Converter={StaticResource PointModeToDisplayInfoConverter}}"
+                                                   FontWeight="Heavy" FontSize="19"></TextBlock>
+                                    </StackPanel>                                    
+                                    <DockPanel  IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40"
+                                                IsEnabled="{Binding Isamend, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                     Text="{Binding CurrentPosition.Name}"/>
+                                        </Border>
+                                    </DockPanel>
+                                    
+                                    <DockPanel>
+                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                            <UniformGrid Rows="1" IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                                <RadioButton Content="绝对位置" Style="{StaticResource MaterialDesignSecondaryRadioButton}"
+                                                             IsChecked="{Binding CurrentPosition.IsAbsolute}"/>
+                                                <RadioButton Content="相对位置" Style="{StaticResource MaterialDesignSecondaryRadioButton}"
+                                                             IsChecked="{Binding CurrentPosition.IsAbsolute, Converter={StaticResource BooleanToOppositeConvertor}}"/>
+                                            </UniformGrid>
+                                        </Border>
+                                    </DockPanel>
+                                </UniformGrid>
+                                <!--<StackPanel Margin="24 0 24 20">
+                                    <TextBlock>点位描述</TextBlock>
+                                    <Border Background="#f1f1f1" CornerRadius="7" Margin="0 10 30 0" Height="127">
+                                        <TextBox BorderThickness="0" Padding="5 10"
+                                                 MaxLength="150"
+                                                 Height="127"
+                                                 BorderBrush="Transparent"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="Wrap"
+                                                 VerticalAlignment="Top"
+                                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                                    </Border>
+                                </StackPanel>-->
+                                <UniformGrid Columns="5" Margin="24 -20 24 16">
+                                    <TextBlock VerticalAlignment="Bottom" Text="x轴" Margin="0 3"/>
+                                    <TextBlock VerticalAlignment="Bottom" Text="y轴" Margin="0 3"/>
+                                    <TextBlock VerticalAlignment="Bottom" Text="z轴" Margin="0 3"/>
+                                    <TextBlock VerticalAlignment="Bottom" Text="a轴" Margin="0 3"/>
+                                    <TextBlock VerticalAlignment="Bottom" Text="c轴" Margin="0 3"/>
+                                    <DockPanel IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                     Text="{Binding CurrentPosition.XPresetPlace}"/>
+                                        </Border>
+                                    </DockPanel>
+                                    <DockPanel IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                     Text="{Binding CurrentPosition.YPresetPlace}"/>
+                                        </Border>
+                                    </DockPanel>
+                                    <DockPanel IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                     Text="{Binding CurrentPosition.ZPresetPlace}"/>
+                                        </Border>
+                                    </DockPanel>
+                                    <DockPanel IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                     Text="{Binding CurrentPosition.APresetPlace}"/>
+                                        </Border>
+                                    </DockPanel>
+                                    <DockPanel IsEnabled="{Binding IsReadonly, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                        <Border Background="#f1f1f1" CornerRadius="7" Margin="0 0 30 0" Height="40">
+                                            <TextBox BorderThickness="0" Margin="10 0"
+                                                     Text="{Binding CurrentPosition.BPresetPlace}"/>
+                                        </Border>
+                                    </DockPanel>
+                                    <Button Margin="0 0 30 0" Content="移动" Padding="5 0" 
+                                            IsEnabled="{Binding IsReadonly}"
+                                            Command="{Binding MoveAxisCommand}" 
+                                            CommandParameter="X" Visibility="{Binding IsReadonly, Converter={StaticResource ReadonlyToVisibilityConvertor}}"/>
+                                    <Button Margin="0 0 30 0" Content="移动" Padding="5 0" 
+                                            IsEnabled="{Binding IsReadonly}"
+                                            Command="{Binding MoveAxisCommand}" 
+                                            CommandParameter="Y" Visibility="{Binding IsReadonly, Converter={StaticResource ReadonlyToVisibilityConvertor}}"/>
+                                    <Button Margin="0 0 30 0" Content="移动" Padding="5 0" 
+                                            IsEnabled="{Binding IsReadonly}"
+                                            Command="{Binding MoveAxisCommand}" 
+                                            CommandParameter="Z" Visibility="{Binding IsReadonly, Converter={StaticResource ReadonlyToVisibilityConvertor}}"/>
+                                    <Button Margin="0 0 30 0" Content="移动" Padding="5 0" 
+                                            IsEnabled="{Binding IsReadonly}"
+                                            Command="{Binding MoveAxisCommand}" 
+                                            CommandParameter="A" Visibility="{Binding IsReadonly, Converter={StaticResource ReadonlyToVisibilityConvertor}}"/>
+                                    <Button Margin="0 0 30 0" Content="移动" Padding="5 0" 
+                                            IsEnabled="{Binding IsReadonly}"
+                                            Command="{Binding MoveAxisCommand}" 
+                                            CommandParameter="B" Visibility="{Binding IsReadonly, Converter={StaticResource ReadonlyToVisibilityConvertor}}"/>
+                                </UniformGrid>
+                            </StackPanel>
+                    </Expander>
+                </Border>
+            </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

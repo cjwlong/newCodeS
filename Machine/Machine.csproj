@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
+    <PackageReference Include="Microsoft.Data.Services" Version="5.8.5" />
+    <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.1" />
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+    <Folder Include="SoftCNC\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OperationLogManager\OperationLogManager.csproj" />
+    <ProjectReference Include="..\PublishTools\PublishTools.csproj" />
+    <ProjectReference Include="..\ServiceManager\ServiceManager.csproj" />
+    <ProjectReference Include="..\SharedResource\SharedResource.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ACS.SPiiPlusNET">
+      <HintPath>bin\Debug\net6.0-windows\ACS.SPiiPlusNET.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+</Project>

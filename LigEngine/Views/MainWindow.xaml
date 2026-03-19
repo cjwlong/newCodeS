@@ -1,0 +1,226 @@
+﻿<Window x:Class="LigEngine.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:convertor="clr-namespace:LigEngine.convertors"
+        xmlns:prism="http://prismlibrary.com/"
+        xmlns:RegionManage="clr-namespace:SharedResource.libs;assembly=SharedResource"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        WindowStartupLocation="CenterScreen"
+        Closing="Window_Closing"
+        Title="{Binding Title}" Height="900" Width="1620" Cursor="">
+    <Window.Resources>
+        <convertor:ViewMaragerConvertor x:Key="ViewMaragerConvertor"/>
+        <Style x:Key="TitleBarButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E5E5E5"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#D0D0D0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="2.75*"/>
+            <RowDefinition Height="17*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <DockPanel LastChildFill="True">
+
+                <!-- 右侧按钮：必须在前 -->
+                <StackPanel Orientation="Horizontal"
+                DockPanel.Dock="Right">
+
+                    <Button Width="46"
+                Height="32"
+                Click="Minimize_Click"
+                Background="Transparent"
+                BorderThickness="0">
+                        <TextBlock Text="—"
+                       FontSize="14"
+                       Foreground="#555"/>
+                    </Button>
+
+                    <Button Style="{StaticResource TitleBarButtonStyle}"
+                Width="46"
+                Height="32"
+                Click="Close_Click">
+                        <TextBlock Text="✕"
+                       Foreground="#555"
+                       FontSize="14"/>
+                    </Button>
+                </StackPanel>
+
+                <!-- 标题：必须是最后一个 -->
+                <TextBlock Text=""
+               VerticalAlignment="Center"
+               Margin="10,0"
+               Foreground="#333"
+               FontSize="13"/>
+            </DockPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="0.75*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Image Source="/icons/kljm.png" Height="45"></Image>
+                    <Grid Width="10"></Grid>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="30" FontWeight="Heavy"
+                               Margin="0 7">激光刻蚀平台 KLE NTM 5S</TextBlock>
+                </StackPanel>                
+
+                <UniformGrid Rows="1" Margin="0 2 0 5">
+                    <RadioButton Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
+                                 VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Width="100" Height="37" IsChecked="True"
+                                 Command="{Binding Switch2PageCommand}"
+                                 CommandParameter="HomePage">主页</RadioButton>
+                    <RadioButton Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
+                                 VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Width="100" Height="37"
+                                 Command="{Binding Switch2PageCommand}"
+                                 CommandParameter="CameraPage">相机</RadioButton>
+                    <RadioButton Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
+                                 VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Width="100" Height="37"
+                                 Command="{Binding Switch2PageCommand}"
+                                 CommandParameter="CraftConfigPage">工艺配置</RadioButton>
+                    <RadioButton Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
+                                 VerticalAlignment="Center" HorizontalAlignment="Center"
+                                 Width="100" Height="37"
+                                 Command="{Binding Switch2PageCommand}"
+                                 CommandParameter="SettingPage">设置</RadioButton>
+                    <RadioButton Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
+              VerticalAlignment="Center" HorizontalAlignment="Center"
+              Width="100" Height="37"
+              Command="{Binding Switch2PageCommand}"
+              CommandParameter="DebugPage">调试</RadioButton>
+                </UniformGrid>
+            </StackPanel>
+
+            <ContentControl Grid.Column="1" Grid.ColumnSpan="2" 
+                            prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.MenuControlBtn_Region}"/>
+
+            <Grid Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2.5*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <ContentControl Grid.Column="0"
+                                prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.IODeviceDispaly_Region}"/>
+                <ContentControl Grid.Column="1"
+                                prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.MenuLogin_Region}"/>
+            </Grid>            
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.8*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Visibility="{Binding CurrentPage, Converter={StaticResource ViewMaragerConvertor}, ConverterParameter=HomePage}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="9.5*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="7*"/>
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ContentControl Grid.Row="0" prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.ProcessAnime_Region}"/>
+
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <ContentControl Grid.Column="0"  prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.ProductionMeg_Region}"/>
+                            <ContentControl Grid.Column="1"  prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.ProductMeg_Region}"/>
+                            <ContentControl Grid.Column="2"  prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.DeviceMeg_Region}"/>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.YieldChart_Region}"/>
+                        </Grid>
+                    </Grid>
+                </Grid>              
+
+                <Grid Grid.Row="1">
+                    <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.ProcessProgress_Region}"/>
+                </Grid>
+
+                <Grid Grid.Row="2" Visibility="{Binding IsLogDisplay}">
+                    <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.OperationLog_Region}"/>
+                </Grid>
+                <Grid Grid.Row="2" Visibility="{Binding IsDebugDisplay}">
+                    <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.CraftDebug_Region}"/>
+                </Grid>
+            </Grid>
+
+            <Grid Visibility="{Binding CurrentPage, Converter={StaticResource ViewMaragerConvertor}, ConverterParameter=CameraPage}">
+                <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.CCDControl_Region}"/>
+            </Grid>
+
+            <Grid Visibility="{Binding CurrentPage, Converter={StaticResource ViewMaragerConvertor}, ConverterParameter=CraftConfigPage}">
+                <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.CraftConfig_Region}"/>
+            </Grid>
+
+            <Grid Visibility="{Binding CurrentPage, Converter={StaticResource ViewMaragerConvertor}, ConverterParameter=SettingPage}">
+                <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.DeviceSetting_Region}"/>
+            </Grid>
+            <Grid Visibility="{Binding CurrentPage, Converter={StaticResource ViewMaragerConvertor}, ConverterParameter=DebugPage}">
+                <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.DevicDebug_Region}"/>
+            </Grid>
+
+            <Grid Grid.Column="1" Margin="2 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2.9*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="2.55*"/>
+                </Grid.RowDefinitions>
+
+                <ContentControl Grid.Row="0"
+                                prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.AcsAxisControl_Region}"/>
+                <ContentControl Grid.Row="1"
+                                prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.DeviceControl_Region}"/>
+                <ContentControl Grid.Row="2"
+                                prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.HardwareMonitor_Region}"/>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <ContentControl prism:RegionManager.RegionName="{x:Static RegionManage:RegionManage.SoftwareMsg_Region}"
+                            VerticalAlignment="Center" HorizontalAlignment="Center"/>            
+        </Grid>
+    </Grid>
+</Window>

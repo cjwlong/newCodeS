@@ -1,0 +1,279 @@
+﻿<UserControl x:Class="LaserManager.Views.LaserSetting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LaserManager.Views"
+             xmlns:convertor="clr-namespace:LaserManager.convertors"
+             xmlns:base_convertor="clr-namespace:SharedResource.convertors;assembly=SharedResource"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             FontSize="16"
+             d:DesignHeight="700" d:DesignWidth="800">
+    <UserControl.Resources>
+        <convertor:EXT_TRIG_MODconvertor x:Key="EXT_TRIG_MODconvertor"/>
+        <convertor:LaserOn2BtnContentConvertor x:Key="LaserOn2BtnContentConvertor"/>
+        <convertor:InternalMode2BackgroundConvertor x:Key="InternalMode2BackgroundConvertor"/>
+        <convertor:ExternalTriggerStateConverter x:Key="ExternalTriggerStateConverter"/>
+        <base_convertor:Laserstatus2BtnStatusConvertor x:Key="Laserstatus2BtnStatusConvertor"/>
+        <base_convertor:BooleanToOppositeConvertor x:Key="BooleanToOppositeConvertor"/>
+    </UserControl.Resources>
+    <StackPanel>
+        <Border Background="#80e6e6e6" CornerRadius="5" Height="100" VerticalAlignment="Top">
+            <StackPanel>
+                <Label FontWeight="Heavy" FontSize="21" Margin="0 10">激光器连接</Label>
+
+                <StackPanel Orientation="Horizontal" Margin="20 0">
+                    <StackPanel Orientation="Horizontal">
+                        <Label>I P :</Label>
+                        <TextBox BorderBrush="Gray" BorderThickness="1"
+                                 Padding="1" MinWidth="100"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Text="{Binding BLLaser.IP}"></TextBox>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="20 0">
+                        <Label>Port :</Label>
+                        <TextBox BorderBrush="Gray" BorderThickness="1"
+                                 Padding="1" MinWidth="100"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Text="{Binding BLLaser.Port}"></TextBox>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="20 0">
+                        <Button Height="30" Width="100"
+                                Command="{Binding LaserConnectCommand}"
+                                Content="{Binding BLLaser.IsConnected, Mode=OneWay, Converter={StaticResource Laserstatus2BtnStatusConvertor}, ConverterParameter=connect}"
+                                IsEnabled="{Binding BLLaser.Connecting, Mode=OneWay, Converter={StaticResource Laserstatus2BtnStatusConvertor}, ConverterParameter=connecting}"></Button>
+                        <ProgressBar IsIndeterminate="True"
+                                     Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                     Visibility="{Binding BLLaser.Connecting, Mode=OneWay, Converter={StaticResource Laserstatus2BtnStatusConvertor}, ConverterParameter=Visibility}"
+                                     Value="70" Margin="5 0"
+             ></ProgressBar>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Grid Height="15"></Grid>
+        
+        <Border Background="#80e6e6e6" CornerRadius="5" Height="430">
+            <StackPanel>
+                <Label FontWeight="Heavy" FontSize="21" Margin="0 10">激光器控制</Label>
+
+                <Grid Margin="20 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5*"/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.7*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Row="0" BorderBrush="#787878" BorderThickness="1" Padding="5">
+                            <StackPanel x:Name="RootPanel">
+                                <StackPanel.BindingGroup>
+                                    <BindingGroup x:Name="EditGroup"/>
+                                </StackPanel.BindingGroup>
+                                
+                                    <UniformGrid Columns="4">
+                                    <Grid></Grid>                                        
+                                    <TextBlock HorizontalAlignment="Center">实际值</TextBlock>
+                                    <TextBlock HorizontalAlignment="Center">设置值</TextBlock>
+                                    <Grid></Grid>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">频率（KHz）：</TextBlock>
+                                    <TextBlock Width="70" Text="{Binding BLLaser.BaseFreq, Mode=OneWay}"
+                                               HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                                    <TextBox Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                             Text="{Binding SET_BaseFreq, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                             materialDesign:HintAssist.Hint="50-2000"
+                                             FontSize="15"></TextBox>
+                                    <Button Margin="25 7" Width="70" HorizontalAlignment="Left"
+                                            IsEnabled="{Binding BLLaser.IsConnected}"
+                                            Command="{Binding ApplyCommand}"
+                                            CommandParameter="SET_BaseFreq">应用</Button>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">AOM 分频数：</TextBlock>
+                                    <TextBlock Width="70" Text="{Binding BLLaser.Divider, Mode=OneWay}"
+                                               HorizontalAlignment="Center"  VerticalAlignment="Center"></TextBlock>
+                                    <TextBox Width="80" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                             Text="{Binding SET_Divider, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                             materialDesign:HintAssist.Hint="0-1000000"
+                                             FontSize="15"></TextBox>
+                                    <Button Margin="25 7" Width="70" HorizontalAlignment="Left"
+                                            IsEnabled="{Binding BLLaser.IsConnected}"
+                                            Command="{Binding ApplyCommand}"
+                                            CommandParameter="SET_Divider">应用</Button>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">Burst 脉冲数：</TextBlock>
+                                    <TextBlock Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                               Text="{Binding BLLaser.BurstNum, Mode=OneWay}"></TextBlock>
+                                    <TextBox Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                             Text="{Binding SET_BurstNum, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                             materialDesign:HintAssist.Hint="1-15"
+                                             FontSize="15"></TextBox>
+                                    <Button Margin="25 7" Width="70" HorizontalAlignment="Left"
+                                            IsEnabled="{Binding BLLaser.IsConnected}"
+                                            Command="{Binding ApplyCommand}"
+                                            CommandParameter="SET_BurstNum">应用</Button>
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">目 标 功 率 (%)：</TextBlock>
+                                    <TextBlock Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                               Text="{Binding BLLaser.PowerFactor, Mode=OneWay}"></TextBlock>
+                                    <TextBox Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                             Text="{Binding SET_PowerFactor, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                             materialDesign:HintAssist.Hint="0-100%"
+                                             FontSize="15"></TextBox>
+                                    <Button Margin="25 7" Width="70" HorizontalAlignment="Left"
+                                            IsEnabled="{Binding BLLaser.IsConnected}"
+                                            Command="{Binding ApplyCommand}"
+                                            CommandParameter="SET_PowerFactor">应用</Button>
+                                </UniformGrid>
+                               
+                                <!--<StackPanel Orientation="Horizontal" Margin="0 7">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">频率（KHz）：</TextBlock>
+                                    <Grid Width="20"></Grid>
+                                    <TextBlock Width="70" Text="{Binding BLLaser.BaseFreq, Mode=OneWay}"
+                                               HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                                    <Grid Width="40"></Grid>
+                                    <Grid>
+                                        <TextBox Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                                 Text="{Binding SET_BaseFreq, Mode=TwoWay, UpdateSourceTrigger=Explicit}"></TextBox>
+                                    </Grid>
+                                </StackPanel>-->
+
+                                <!--<StackPanel Orientation="Horizontal" Margin="0 7">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">AOM 分频数：</TextBlock>
+                                    <Grid Width="30"></Grid>
+                                    <TextBlock Width="70" Text="{Binding BLLaser.Divider, Mode=OneWay}"
+                                               HorizontalAlignment="Center"  VerticalAlignment="Center"></TextBlock>
+                                    <Grid Width="30"></Grid>
+                                    <TextBox Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                             Text="{Binding SET_Divider, Mode=TwoWay, UpdateSourceTrigger=Explicit}"></TextBox>
+                                </StackPanel>-->
+
+                                <!--<StackPanel Orientation="Horizontal" Margin="0 7">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">Burst 脉冲数：</TextBlock>
+                                    <Grid Width="30"></Grid>
+                                    <TextBlock Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                               Text="{Binding BLLaser.BurstNum, Mode=OneWay}"></TextBlock>
+                                    <Grid Width="30"></Grid>
+                                    <TextBox Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                             Text="{Binding SET_BurstNum, Mode=TwoWay, UpdateSourceTrigger=Explicit}"></TextBox>
+                                </StackPanel>-->
+
+                                <!--<StackPanel Orientation="Horizontal" Margin="0 7">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">目 标 功 率 (%)：</TextBlock>
+                                    <Grid Width="25"></Grid>
+                                    <TextBlock Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                               Text="{Binding BLLaser.PowerFactor, Mode=OneWay}"></TextBlock>
+                                    <Grid Width="35"></Grid>
+                                    <TextBox Width="70" HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                             Text="{Binding SET_PowerFactor, Mode=TwoWay, UpdateSourceTrigger=Explicit}"></TextBox>
+                                </StackPanel>-->
+
+                                <!--<Button Margin="25 7" Width="70" HorizontalAlignment="Left"
+                                        IsEnabled="{Binding BLLaser.IsConnected}"
+                                        Command="{Binding ApplyCommand}"
+                                        CommandParameter="{Binding ElementName=RootPanel, Path=BindingGroup}">应用</Button>-->
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="0" BorderBrush="#787878" BorderThickness="1" Padding="5" Grid.Column="1">
+                            <StackPanel>
+                                <!--<StackPanel Orientation="Horizontal">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">输出频率(KHz):</TextBlock>
+                                    <Grid Width="40"></Grid>
+                                    <TextBox Width="70" BorderThickness="0" IsReadOnly="True" Text="{Binding BLLaser.OutFreq}"></TextBox>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0 7">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="130">输出脉冲能量(uJ)：</TextBlock>
+                                    <Grid Width="30"></Grid>
+                                    <TextBox Width="70" BorderThickness="0" IsReadOnly="True" Text="{Binding BLLaser.PulseEng}"></TextBox>
+                                </StackPanel>-->
+
+                                <StackPanel Orientation="Horizontal" Margin="0 15">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">激光器温度(°C)：</TextBlock>
+                                    <Grid Width="30"></Grid>
+                                    <TextBox Width="70" BorderThickness="0" IsReadOnly="True" Text="{Binding BLLaser.LaserHead}"></TextBox>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0 15">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Width="120">实际重频 KHz：</TextBlock>
+                                    <Grid Width="30"></Grid>
+                                    <TextBox Width="70" BorderThickness="0" IsReadOnly="True" Text="{Binding BLLaser.ActualFrequency}"></TextBox>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0 15">
+                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Width="120">出光口功率(W)：</TextBlock>
+                                    <Grid Width="30"></Grid>
+                                    <TextBox Width="70" BorderThickness="0" IsReadOnly="True" Text="{Binding BLLaser.LaserPower}"
+                                             FontSize="25"
+                                             VerticalAlignment="Bottom"
+                                             FontWeight="Heavy"></TextBox>
+                                </StackPanel>
+
+                                <Grid>
+                                    <UniformGrid Rows="1" Margin="0 15" IsEnabled="{Binding BLLaser.IsConnected}">
+                                        <RadioButton IsChecked="{Binding BLLaser.EXT_TRIG_MOD, Mode=OneWay, Converter={StaticResource EXT_TRIG_MODconvertor}, ConverterParameter=0}"
+                                                     Padding="5 0" Width="70"
+                                                     Name="GATEbtn"
+                                                     Command="{Binding SelectModeCommand}" CommandParameter="GATED">GATED</RadioButton>
+                                        <RadioButton IsChecked="{Binding BLLaser.EXT_TRIG_MOD, Mode=OneWay, Converter={StaticResource EXT_TRIG_MODconvertor}, ConverterParameter=1}"
+                                                     Padding="5 0" Width="70"
+                                                     Name="TODbtn"                
+                                                     Command="{Binding SelectModeCommand}" CommandParameter="TOD">TOD</RadioButton>
+                                        <Grid></Grid>
+                                    </UniformGrid>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0 20">
+
+                        <Border Grid.Row="1" BorderBrush="#787878" BorderThickness="1" Padding="5">
+                            <UniformGrid Rows="1"
+                                         IsEnabled="{Binding BLLaser.IsConnected}">
+                                <Button Width="100" Command="{Binding OpenLaserCommand}" 
+                                        Content="{Binding BLLaser.IsLaserOn, Converter={StaticResource LaserOn2BtnContentConvertor}}"></Button>
+                                <UniformGrid Rows="1" IsEnabled="{Binding BLLaser.IsLaserOn}">
+                                    <!--<Button Width="100" Command="{Binding SetLaserOutModeCommand}" CommandParameter="Emission"
+                                            Content="Emission"
+                                            Background="{Binding BLLaser.Internal_Trigger_state, Converter={StaticResource InternalMode2BackgroundConvertor}, ConverterParameter=int}"></Button>
+                                    <Button Width="100"  Command="{Binding SetLaserOutModeCommand}" CommandParameter="TRIG_EN"
+                                            Content="TRIG EN"
+                                            Background="{Binding BLLaser.External_Trigger_state, Converter={StaticResource InternalMode2BackgroundConvertor}, ConverterParameter=out}"></Button>-->
+                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center">TRIG EN</TextBlock>
+                                    <ToggleButton HorizontalAlignment="Left" 
+                                                  IsChecked="{Binding BLLaser.External_Trigger_state, Converter={StaticResource ExternalTriggerStateConverter}, Mode=OneWay}"
+                                                  Command="{Binding ExTrigOnAndOffCommand}"
+                                                  IsEnabled="{Binding BLLaser.Internal_Trigger_state, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                    </ToggleButton>
+
+                                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center">Emission</TextBlock>
+                                    <ToggleButton HorizontalAlignment="Left" 
+                                                  IsChecked="{Binding BLLaser.Internal_Trigger_state, Converter={StaticResource ExternalTriggerStateConverter}, Mode=OneWay}"
+                                                  Command="{Binding EmissionOnAndOffCommand}"
+                                                  IsEnabled="{Binding BLLaser.External_Trigger_state, Converter={StaticResource BooleanToOppositeConvertor}}">
+                                    </ToggleButton>
+                                </UniformGrid>
+                            </UniformGrid>
+                        </Border>
+                    </Grid>
+
+                    <Border Grid.Row="2" BorderBrush="#787878" BorderThickness="1" Padding="5">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center">激光器状态:</TextBlock>
+                            <Grid Width="20"></Grid>
+                            <TextBox Width="400" IsReadOnly="True" BorderThickness="0" Text="{Binding BLLaser.DisplayText}" TextAlignment="Center"></TextBox>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
